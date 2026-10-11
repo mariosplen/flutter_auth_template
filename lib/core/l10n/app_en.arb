@@ -1,4 +1,52 @@
 {
   "@@locale": "en",
-  "helloWorld": "Hello World"
+  "signIn": "Sign in",
+  "createAccount": "Create account",
+  "name": "Name",
+  "email": "Email",
+  "password": "Password",
+  "joined": "Joined",
+  "confirmEmail": "Check your email to confirm your account, then sign in.",
+  "errorNetwork": "Couldn't connect. Check your connection and try again.",
+  "errorInvalidEmail": "Enter a valid email address.",
+  "errorInvalidCredentials": "Wrong email or password.",
+  "errorEmailNotConfirmed": "Please confirm your email first.",
+  "errorUserAlreadyExists": "An account with this email already exists.",
+  "errorWeakPassword": "This password is too weak.",
+  "errorPasswordTooShort": "Use at least {count} characters.",
+  "@errorPasswordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorRateLimited": "Too many attempts. Please try again later.",
+  "errorUnexpected": "Something went wrong. Please try again.",
+  "errorPostTitleTaken": "You already have a post with this title.",
+  "tryAgain": "Try again",
+  "postsTab": "Posts",
+  "noPosts": "No posts yet",
+  "postByline": "{author} · {date}",
+  "@postByline": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "newPost": "New post",
+  "postTitle": "Title",
+  "postContent": "Content",
+  "publish": "Post",
+  "profileTab": "Profile",
+  "settingsTab": "Settings",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "signOut": "Sign out"
 }
