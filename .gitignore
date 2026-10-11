@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Generated code: `dart run build_runner build` (*.g.dart),
+# `flutter pub get` or `flutter gen-l10n` (app_localizations*.dart)
+*.g.dart
+lib/core/l10n/app_localizations*.dart
+

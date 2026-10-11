@@ -1,0 +1,9 @@
+{
+  "arb-editor.suppressedWarnings": [
+    "missing_metadata_for_key"
+  ],
+  "files.exclude": {
+    "**/*.g.dart": true,
+    "**/app_localizations*.dart": true
+  }
+}
