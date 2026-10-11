@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_auth_template/features/posts/presentation/screen/posts_screen.dart';
 import 'package:flutter_auth_template/features/profile/presentation/screen/profile_screen.dart';
+import 'package:flutter_auth_template/features/settings/presentation/screen/settings_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
@@ -42,7 +43,7 @@ class const AppTabs({super.key}) extends StatelessWidget {
               switch (tab) {
                 .posts => const PostsScreen(),
                 .profile => const ProfileScreen(),
-                .settings => const Text('Settings'),
+                .settings => const SettingsScreen(),
               },
           ],
         ),
