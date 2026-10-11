@@ -9,6 +9,8 @@
   "confirmEmail": "Check your email to confirm your account, then sign in.",
   "errorNetwork": "Couldn't connect. Check your connection and try again.",
   "errorInvalidEmail": "Enter a valid email address.",
+  "errorEmailAddressInvalid": "This email address isn't valid.",
+  "errorValidationFailed": "Some of the details you entered aren't valid. Check them and try again.",
   "errorInvalidCredentials": "Wrong email or password.",
   "errorEmailNotConfirmed": "Please confirm your email first.",
   "errorUserAlreadyExists": "An account with this email already exists.",
@@ -21,7 +23,8 @@
       }
     }
   },
-  "errorRateLimited": "Too many attempts. Please try again later.",
+  "errorOverRequestRateLimit": "Too many requests. Wait a moment and try again.",
+  "errorOverEmailSendRateLimit": "Too many emails sent. Wait a few minutes before trying again.",
   "errorUnexpected": "Something went wrong. Please try again.",
   "errorPostTitleTaken": "You already have a post with this title.",
   "tryAgain": "Try again",
