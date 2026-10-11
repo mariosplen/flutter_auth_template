@@ -47,6 +47,10 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
+# Environment config (copy env/example.json to env/dev.json)
+env/*.json
+!env/example.json
+
 # Generated code: `dart run build_runner build` (*.g.dart),
 # `flutter pub get` or `flutter gen-l10n` (app_localizations*.dart)
 *.g.dart
