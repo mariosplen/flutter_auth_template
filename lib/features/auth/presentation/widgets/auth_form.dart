@@ -38,7 +38,7 @@ class _AuthFormState extends State<AuthForm> {
   @override
   Widget build(BuildContext context) {
     final isLoading = context.select(
-      (AuthCubit cubit) => _status(cubit.state) is Loading,
+      (AuthCubit cubit) => cubit.state.isLoading,
     );
     return BlocListener<AuthCubit, AuthState>(
       listenWhen: (previous, current) =>

@@ -9,6 +9,9 @@ import 'sign_up_screen.dart';
 class const SignInScreen({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.select(
+      (AuthCubit cubit) => cubit.state.isLoading,
+    );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.signIn)),
       body: ListView(
@@ -23,9 +26,13 @@ class const SignInScreen({super.key}) extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const SignUpScreen()),
-            ),
+            onPressed: isLoading
+                ? null
+                : () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const SignUpScreen(),
+                    ),
+                  ),
             child: Text(context.l10n.createAccount),
           ),
         ],
