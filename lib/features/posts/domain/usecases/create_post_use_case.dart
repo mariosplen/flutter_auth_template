@@ -1,0 +1,7 @@
+import '../entities/post.dart';
+import '../repositories/posts_repository.dart';
+
+class CreatePostUseCase(final PostsRepository _repository) {
+  Future<Post> call({required String title, required String content}) =>
+      _repository.createPost(title: title, content: content);
+}
