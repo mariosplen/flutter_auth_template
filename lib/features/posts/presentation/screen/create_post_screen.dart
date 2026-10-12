@@ -26,7 +26,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     final isCreating = context.select(
-      (PostsCubit cubit) => cubit.state.createPost.isLoading,
+      (PostsCubit cubit) => cubit.state.createPost is AsyncLoading,
     );
     return BlocListener<PostsCubit, PostsState>(
       listenWhen: (previous, current) =>

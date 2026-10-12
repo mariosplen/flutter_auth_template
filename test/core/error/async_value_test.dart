@@ -21,7 +21,7 @@ void main() {
         final AsyncValue<String> value = AsyncLoading();
 
         // when
-        final isLoading = value.isLoading;
+        final isLoading = value is AsyncLoading<String>;
 
         // then
         expect(isLoading, isTrue);
@@ -38,7 +38,7 @@ void main() {
         final AsyncValue<String> value = AsyncInitial();
 
         // when
-        final isLoading = value.isLoading;
+        final isLoading = value is AsyncLoading<String>;
 
         // then
         expect(isLoading, isFalse);
@@ -55,7 +55,7 @@ void main() {
         final AsyncValue<String> value = AsyncData('value');
 
         // when
-        final isLoading = value.isLoading;
+        final isLoading = value is AsyncLoading<String>;
 
         // then
         expect(isLoading, isFalse);
@@ -72,7 +72,7 @@ void main() {
         final AsyncValue<String> value = AsyncError(tFailure);
 
         // when
-        final isLoading = value.isLoading;
+        final isLoading = value is AsyncLoading<String>;
 
         // then
         expect(isLoading, isFalse);

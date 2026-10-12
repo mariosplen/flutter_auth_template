@@ -4,9 +4,6 @@ import 'failures.dart';
 
 sealed class AsyncValue<T> extends Equatable {
   const AsyncValue();
-
-  bool get isLoading => this is AsyncLoading<T>;
-
   @override
   List<Object?> get props => [];
 }

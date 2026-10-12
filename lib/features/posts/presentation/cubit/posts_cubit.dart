@@ -15,7 +15,7 @@ class PostsCubit({
   this : super(const PostsState());
 
   Future<void> load() async {
-    if (state.posts.isLoading) return;
+    if (state.posts case AsyncLoading()) return;
     emit(state.copyWith(posts: const AsyncLoading()));
     final result = await _getPosts();
     emit(switch (result) {
@@ -25,7 +25,7 @@ class PostsCubit({
   }
 
   Future<void> create({required String title, required String content}) async {
-    if (state.createPost.isLoading) return;
+    if (state.createPost case AsyncLoading()) return;
 
     if (state.posts case AsyncData(value: final current)) {
       emit(state.copyWith(createPost: const AsyncLoading()));

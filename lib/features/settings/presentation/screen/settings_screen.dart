@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/app/app_cubit.dart';
@@ -10,7 +11,7 @@ class const SettingsScreen({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSigningOut = context.select(
-      (AuthCubit cubit) => cubit.state.signOut.isLoading,
+      (AuthCubit cubit) => cubit.state.signOut is AsyncLoading,
     );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settingsTab)),
