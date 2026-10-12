@@ -1,41 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/error/async_value.dart';
 import '../../../../core/l10n/build_context_extensions.dart';
+import '../../domain/validators/credential_validators.dart';
+import '../auth_failure_message.dart';
 import '../cubit/auth_cubit.dart';
-import '../widgets/auth_form.dart';
+import '../cubit/auth_state.dart';
 import 'sign_up_screen.dart';
 
-class const SignInScreen({super.key}) extends StatelessWidget {
+class const SignInScreen({super.key}) extends StatefulWidget {
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = context.select(
       (AuthCubit cubit) => cubit.state.isLoading,
     );
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.signIn)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          AuthForm(
-            submitLabel: context.l10n.signIn,
-            onSubmit: (email, password, _) => context.read<AuthCubit>().signIn(
-              email: email,
-              password: password,
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextButton(
-            onPressed: isLoading
-                ? null
-                : () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const SignUpScreen(),
+    return BlocListener<AuthCubit, AuthState>(
+      listenWhen: (previous, current) => previous.signIn != current.signIn,
+      listener: (context, state) {
+        if (state.signIn case AsyncError(:final failure)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(failure.authMessage(context.l10n))),
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text(context.l10n.signIn)),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Form(
+              key: _formKey,
+              autovalidateMode: .onUnfocus,
+              child: Column(
+                crossAxisAlignment: .stretch,
+                children: [
+                  TextFormField(
+                    controller: _email,
+                    keyboardType: .emailAddress,
+                    autovalidateMode: .onUserInteractionIfError,
+                    decoration: InputDecoration(labelText: context.l10n.email),
+                    validator: (value) {
+                      final email = value!.trim();
+                      return email.isEmpty || isValidEmail(email)
+                          ? null
+                          : context.l10n.errorInvalidEmail;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.password,
                     ),
                   ),
-            child: Text(context.l10n.createAccount),
-          ),
-        ],
+                  const SizedBox(height: 24),
+                  ListenableBuilder(
+                    listenable: Listenable.merge([_email, _password]),
+                    builder: (context, _) {
+                      final email = _email.text.trim();
+                      final password = _password.text;
+                      return FilledButton(
+                        onPressed:
+                            isLoading || email.isEmpty || password.isEmpty
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  context.read<AuthCubit>().signIn(
+                                    email: email,
+                                    password: password,
+                                  );
+                                }
+                              },
+                        child: Text(context.l10n.signIn),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: isLoading
+                  ? null
+                  : () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SignUpScreen(),
+                      ),
+                    ),
+              child: Text(context.l10n.createAccount),
+            ),
+          ],
+        ),
       ),
     );
   }
