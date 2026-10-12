@@ -1,6 +1,7 @@
-import 'package:flutter_auth_template/core/async/async_status.dart';
-import 'package:flutter_auth_template/core/failures/app_failure.dart';
+import 'package:flutter_auth_template/core/error/async_value.dart';
+import 'package:flutter_auth_template/core/error/result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/sign_up_result.dart';
 import '../../domain/usecases/get_current_user_use_case.dart';
@@ -9,6 +10,7 @@ import '../../domain/usecases/sign_out_use_case.dart';
 import '../../domain/usecases/sign_up_use_case.dart';
 import 'auth_state.dart';
 
+@injectable
 class AuthCubit({
   required GetCurrentUserUseCase getCurrentUser,
   required final SignInUseCase _signIn,
@@ -19,13 +21,15 @@ class AuthCubit({
 
   Future<void> signIn({required String email, required String password}) async {
     if (state.isLoading) return;
-    emit(state.copyWith(signIn: const Loading()));
-    try {
-      final user = await _signIn(email: email, password: password);
-      emit(state.copyWith(user: user, signIn: Success(user)));
-    } on AppFailure catch (error) {
-      emit(state.copyWith(signIn: Failure(error)));
-    }
+    emit(state.copyWith(signIn: const AsyncLoading()));
+    final result = await _signIn(email: email, password: password);
+    emit(switch (result) {
+      Ok(value: final user) => state.copyWith(
+        user: user,
+        signIn: AsyncData(user),
+      ),
+      Error(:final failure) => state.copyWith(signIn: AsyncError(failure)),
+    });
   }
 
   Future<void> signUp({
@@ -34,31 +38,24 @@ class AuthCubit({
     required String name,
   }) async {
     if (state.isLoading) return;
-    emit(state.copyWith(signUp: const Loading()));
-    try {
-      final result = await _signUp(
-        email: email,
-        password: password,
-        name: name,
-      );
-      emit(switch (result) {
-        SignedUp(:final user) => state.copyWith(
-          user: user,
-          signUp: Success(result),
-        ),
-        ConfirmationRequired() => state.copyWith(signUp: Success(result)),
-      });
-    } on AppFailure catch (error) {
-      emit(state.copyWith(signUp: Failure(error)));
+    emit(state.copyWith(signUp: const AsyncLoading()));
+    final result = await _signUp(email: email, password: password, name: name);
+    switch (result) {
+      case Ok(:final value):
+        emit(switch (value) {
+          SignedUp(:final user) => state.copyWith(
+            user: user,
+            signUp: AsyncData(value),
+          ),
+          ConfirmationRequired() => state.copyWith(signUp: AsyncData(value)),
+        });
+      case Error(:final failure):
+        emit(state.copyWith(signUp: AsyncError(failure)));
     }
   }
 
   Future<void> signOut() async {
-    try {
-      await _signOut();
-    } on AppFailure {
-      // sign out locally regardless
-    }
+    await _signOut();
     emit(const AuthState());
   }
 

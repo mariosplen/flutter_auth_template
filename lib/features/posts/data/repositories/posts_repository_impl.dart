@@ -1,37 +1,38 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/failures/app_failure.dart';
-import 'package:flutter_auth_template/core/network/to_network_failure.dart';
+import 'package:flutter_auth_template/core/error/failures.dart';
+import 'package:flutter_auth_template/core/error/result.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/post.dart';
 import '../../domain/repositories/posts_repository.dart';
-import '../datasources/posts_api.dart';
+import '../datasources/posts_remote_data_source.dart';
 import '../mappers/post_mapper.dart';
 
-class PostsRepositoryImpl(final PostsApi _postsApi) implements PostsRepository {
+@LazySingleton(as: PostsRepository)
+class PostsRepositoryImpl(final PostsRemoteDataSource _remoteDataSource)
+    implements PostsRepository {
   @override
-  Future<List<Post>> getPosts() async {
+  Future<Result<List<Post>>> getPosts() async {
     try {
-      final posts = await _postsApi.getPosts();
-      return [for (final post in posts) post.toEntity()];
-    } on DioException catch (error) {
-      throw error.toNetworkFailure() ?? UnexpectedFailure(error);
-    } catch (error) {
-      throw UnexpectedFailure(error);
+      final posts = await _remoteDataSource.getPosts();
+      return Result.ok([for (final post in posts) post.toEntity()]);
+    } on Failure catch (failure) {
+      return Result.error(failure);
     }
   }
 
   @override
-  Future<Post> createPost({
+  Future<Result<Post>> createPost({
     required String title,
     required String content,
   }) async {
     try {
-      final post = await _postsApi.createPost(title, content);
-      return post.toEntity();
-    } on DioException catch (error) {
-      throw error.toNetworkFailure() ?? UnexpectedFailure(error);
-    } catch (error) {
-      throw UnexpectedFailure(error);
+      final post = await _remoteDataSource.createPost(
+        title: title,
+        content: content,
+      );
+      return Result.ok(post.toEntity());
+    } on Failure catch (failure) {
+      return Result.error(failure);
     }
   }
 }

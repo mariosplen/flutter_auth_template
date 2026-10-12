@@ -1,8 +1,12 @@
+import 'package:flutter_auth_template/core/error/result.dart';
+import 'package:injectable/injectable.dart';
+
 import '../entities/sign_up_result.dart';
 import '../repositories/auth_repository.dart';
 
+@lazySingleton
 class SignUpUseCase(final AuthRepository _repository) {
-  Future<SignUpResult> call({
+  Future<Result<SignUpResult>> call({
     required String email,
     required String password,
     required String name,

@@ -4,6 +4,7 @@
   ],
   "files.exclude": {
     "**/*.g.dart": true,
+    "**/*.config.dart": true,
     "**/app_localizations*.dart": true
   }
 }

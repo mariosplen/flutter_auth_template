@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../models/session_model.dart';
@@ -9,7 +10,9 @@ part 'auth_api.g.dart';
 const requiresAuthKey = 'requiresAuth';
 
 @RestApi()
+@lazySingleton
 abstract class AuthApi {
+  @factoryMethod
   factory AuthApi(Dio dio) = _AuthApi;
 
   @POST('/auth/v1/signup')

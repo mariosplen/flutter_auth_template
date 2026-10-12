@@ -51,8 +51,9 @@ app.*.map.json
 env/*.json
 !env/example.json
 
-# Generated code: `dart run build_runner build` (*.g.dart),
+# Generated code: `dart run build_runner build` (*.g.dart, *.config.dart),
 # `flutter pub get` or `flutter gen-l10n` (app_localizations*.dart)
 *.g.dart
+*.config.dart
 lib/core/l10n/app_localizations*.dart
 

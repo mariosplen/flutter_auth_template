@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/async/async_status.dart';
-import '../../../../core/extensions/build_context_extensions.dart';
-import '../../../../core/failures/app_failure.dart';
-import '../../../../core/failures/app_failure_message.dart';
+import '../../../../core/error/async_value.dart';
+import '../../../../core/error/failure_message.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/l10n/build_context_extensions.dart';
 import '../cubit/posts_cubit.dart';
 import '../cubit/posts_state.dart';
 
@@ -27,19 +27,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     final isCreating = context.select(
-      (PostsCubit cubit) => cubit.state.createPost is Loading,
+      (PostsCubit cubit) => cubit.state.createPost.isLoading,
     );
     return BlocListener<PostsCubit, PostsState>(
       listenWhen: (previous, current) =>
           previous.createPost != current.createPost,
       listener: (context, state) {
         switch (state.createPost) {
-          case Success():
+          case AsyncData():
             Navigator.of(context).pop();
-          case Failure(:final error):
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(_failureMessage(error))));
-          case _:
+          case AsyncError(:final failure):
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(_failureMessage(failure))));
+          case AsyncInitial() || AsyncLoading():
             break;
         }
       },
@@ -82,5 +83,5 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  String _failureMessage(AppFailure failure) => failure.message(context.l10n);
+  String _failureMessage(Failure failure) => failure.message(context.l10n);
 }

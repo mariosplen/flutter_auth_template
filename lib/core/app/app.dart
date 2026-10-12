@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
 import '../../features/auth/presentation/cubit/auth_state.dart';
+import 'app_cubit.dart';
 import 'app_tabs.dart';
-import 'cubit/app_cubit.dart';
 
 class const App({super.key}) extends StatelessWidget {
   @override

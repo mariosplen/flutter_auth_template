@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../app/cubit/app_state.dart';
+import 'app_state.dart';
 
 extension AppThemeModeMapper on AppThemeMode {
   ThemeMode toThemeMode() => switch (this) {

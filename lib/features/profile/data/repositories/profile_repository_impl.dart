@@ -1,23 +1,22 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/failures/app_failure.dart';
-import 'package:flutter_auth_template/core/network/to_network_failure.dart';
+import 'package:flutter_auth_template/core/error/failures.dart';
+import 'package:flutter_auth_template/core/error/result.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/profile.dart';
 import '../../domain/repositories/profile_repository.dart';
-import '../datasources/profile_api.dart';
+import '../datasources/profile_remote_data_source.dart';
 import '../mappers/profile_mapper.dart';
 
-class ProfileRepositoryImpl(final ProfileApi _profileApi)
+@LazySingleton(as: ProfileRepository)
+class ProfileRepositoryImpl(final ProfileRemoteDataSource _remoteDataSource)
     implements ProfileRepository {
   @override
-  Future<Profile> getProfile(String userId) async {
+  Future<Result<Profile>> getProfile(String userId) async {
     try {
-      final profile = await _profileApi.getProfile('eq.$userId');
-      return profile.toEntity();
-    } on DioException catch (error) {
-      throw error.toNetworkFailure() ?? UnexpectedFailure(error);
-    } catch (error) {
-      throw UnexpectedFailure(error);
+      final profile = await _remoteDataSource.getProfile(userId);
+      return Result.ok(profile.toEntity());
+    } on Failure catch (failure) {
+      return Result.error(failure);
     }
   }
 }

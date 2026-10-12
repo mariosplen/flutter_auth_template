@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/async/async_status.dart';
-import '../../../../core/extensions/build_context_extensions.dart';
-import '../../../../core/failures/app_failure.dart';
-import '../../../../core/failures/app_failure_message.dart';
+import '../../../../core/error/async_value.dart';
+import '../../../../core/error/failure_message.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/l10n/build_context_extensions.dart';
 import '../../domain/failures/auth_failure.dart';
 import '../../domain/validators/credential_validators.dart';
 import '../cubit/auth_cubit.dart';
@@ -45,9 +45,9 @@ class _AuthFormState extends State<AuthForm> {
           _status(previous) != _status(current) &&
           (ModalRoute.isCurrentOf(context) ?? false),
       listener: (context, state) {
-        if (_status(state) case Failure(:final error)) {
+        if (_status(state) case AsyncError(:final failure)) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(_failureMessage(error))));
+              .showSnackBar(SnackBar(content: Text(_failureMessage(failure))));
         }
       },
       child: Form(
@@ -118,10 +118,10 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
-  AsyncStatus<Object?, AppFailure> _status(AuthState state) =>
+  AsyncValue<Object?> _status(AuthState state) =>
       widget.isSignUp ? state.signUp : state.signIn;
 
-  String _failureMessage(AppFailure failure) => switch (failure) {
+  String _failureMessage(Failure failure) => switch (failure) {
     AuthFailure(:final type) => switch (type) {
       .emailAddressInvalid => context.l10n.errorEmailAddressInvalid,
       .validationFailed => context.l10n.errorValidationFailed,

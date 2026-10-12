@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/extensions/build_context_extensions.dart';
-import '../../../../core/async/async_status.dart';
+import '../../../../core/error/async_value.dart';
+import '../../../../core/l10n/build_context_extensions.dart';
 import '../../domain/entities/sign_up_result.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
@@ -13,7 +13,7 @@ class const SignUpScreen({super.key}) extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listenWhen: (_, current) => switch (current.signUp) {
-        Success<SignUpResult>(data: ConfirmationRequired()) => true,
+        AsyncData(value: ConfirmationRequired()) => true,
         _ => false,
       },
       listener: (context, _) {

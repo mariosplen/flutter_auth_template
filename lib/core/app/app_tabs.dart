@@ -5,14 +5,12 @@ import 'package:flutter_auth_template/features/settings/presentation/screen/sett
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
-import '../../features/posts/domain/usecases/create_post_use_case.dart';
-import '../../features/posts/domain/usecases/get_posts_use_case.dart';
 import '../../features/posts/presentation/cubit/posts_cubit.dart';
-import '../../features/profile/domain/usecases/get_profile_use_case.dart';
 import '../../features/profile/presentation/cubit/profile_cubit.dart';
-import '../extensions/build_context_extensions.dart';
-import 'cubit/app_cubit.dart';
-import 'cubit/app_state.dart';
+import '../di/injection.dart';
+import '../l10n/build_context_extensions.dart';
+import 'app_cubit.dart';
+import 'app_state.dart';
 
 class const AppTabs({super.key}) extends StatelessWidget {
   @override
@@ -22,16 +20,10 @@ class const AppTabs({super.key}) extends StatelessWidget {
     );
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => getIt<PostsCubit>()..load()),
         BlocProvider(
-          create: (context) => PostsCubit(
-            getPosts: GetPostsUseCase(context.read()),
-            createPost: CreatePostUseCase(context.read()),
-          )..load(),
-        ),
-        BlocProvider(
-          create: (context) => ProfileCubit(
-            getProfile: GetProfileUseCase(context.read()),
-            userId: context.read<AuthCubit>().state.user!.id,
+          create: (context) => getIt<ProfileCubit>(
+            param1: context.read<AuthCubit>().state.user!.id,
           )..load(),
         ),
       ],

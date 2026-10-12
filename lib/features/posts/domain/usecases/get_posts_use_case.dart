@@ -1,6 +1,10 @@
+import 'package:flutter_auth_template/core/error/result.dart';
+import 'package:injectable/injectable.dart';
+
 import '../entities/post.dart';
 import '../repositories/posts_repository.dart';
 
+@lazySingleton
 class GetPostsUseCase(final PostsRepository _repository) {
-  Future<List<Post>> call() => _repository.getPosts();
+  Future<Result<List<Post>>> call() => _repository.getPosts();
 }
