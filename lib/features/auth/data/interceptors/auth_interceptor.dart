@@ -29,7 +29,7 @@ class AuthInterceptor({
   ) async {
     final options = err.requestOptions;
     final session = _sessionStorage.session;
-    if (err.response?.statusCode != 401 ||
+    if (!_isUnauthorized(err) ||
         session == null ||
         options.extra[requiresAuthKey] == false ||
         options.extra[_retriedKey] == true) {
@@ -72,6 +72,13 @@ class AuthInterceptor({
       rethrow;
     }
   }
+
+  static bool _isUnauthorized(DioException error) => switch (error.response) {
+    Response(statusCode: 401) => true,
+    // Supabase Auth answers an expired access token with 403 bad_jwt
+    Response(statusCode: 403, data: {'error_code': 'bad_jwt'}) => true,
+    _ => false,
+  };
 
   static bool _isRejected(DioException error) =>
       switch (error.response?.statusCode) {
