@@ -55,6 +55,8 @@ class AuthCubit({
   }
 
   Future<void> signOut() async {
+    if (state.signOut.isLoading) return;
+    emit(state.copyWith(signOut: const AsyncLoading()));
     await _signOut();
     emit(const AuthState());
   }

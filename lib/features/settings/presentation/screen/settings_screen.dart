@@ -9,6 +9,9 @@ import '../../../auth/presentation/cubit/auth_cubit.dart';
 class const SettingsScreen({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isSigningOut = context.select(
+      (AuthCubit cubit) => cubit.state.signOut.isLoading,
+    );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settingsTab)),
       body: ListView(
@@ -36,8 +39,15 @@ class const SettingsScreen({super.key}) extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           OutlinedButton(
-            onPressed: () => context.read<AuthCubit>().signOut(),
-            child: Text(context.l10n.signOut),
+            onPressed: isSigningOut
+                ? null
+                : () => context.read<AuthCubit>().signOut(),
+            child: isSigningOut
+                ? const SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(context.l10n.signOut),
           ),
         ],
       ),

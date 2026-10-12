@@ -12,9 +12,10 @@ class const AuthState({
   final User? user,
   final AsyncValue<User> signIn = const AsyncInitial(),
   final AsyncValue<SignUpResult> signUp = const AsyncInitial(),
+  final AsyncValue<void> signOut = const AsyncInitial(),
 }) extends Equatable {
   bool get isLoading => signIn.isLoading || signUp.isLoading;
 
   @override
-  List<Object?> get props => [user, signIn, signUp, isLoading];
+  List<Object?> get props => [user, signIn, signUp, signOut, isLoading];
 }
