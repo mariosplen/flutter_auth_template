@@ -14,7 +14,7 @@ class ProfileCubit({
   this : super(const ProfileState());
 
   Future<void> load() async {
-    if (state.profile.isLoading) return;
+    if (state.profile case AsyncLoading()) return;
     emit(state.copyWith(profile: const AsyncLoading()));
     final result = await _getProfile(_userId);
     emit(switch (result) {
