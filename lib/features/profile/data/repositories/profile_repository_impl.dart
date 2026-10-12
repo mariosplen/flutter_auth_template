@@ -17,6 +17,8 @@ class ProfileRepositoryImpl(final ProfileRemoteDataSource _remoteDataSource)
       return Result.ok(profile.toEntity());
     } on Failure catch (failure) {
       return Result.error(failure);
+    } catch (error) {
+      return Result.error(GenericFailure(error));
     }
   }
 }

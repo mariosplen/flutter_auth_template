@@ -8,3 +8,5 @@ abstract class const Failure(final Object cause)
 }
 
 class const ServerFailure(super.cause) extends Failure;
+
+class const GenericFailure(super.cause) extends Failure;

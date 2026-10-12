@@ -32,6 +32,8 @@ class AuthRepositoryImpl({
       return Result.ok(session.user.toEntity());
     } on Failure catch (failure) {
       return Result.error(failure);
+    } catch (error) {
+      return Result.error(GenericFailure(error));
     }
   }
 
@@ -56,6 +58,8 @@ class AuthRepositoryImpl({
       }
     } on Failure catch (failure) {
       return Result.error(failure);
+    } catch (error) {
+      return Result.error(GenericFailure(error));
     }
   }
 
@@ -63,9 +67,13 @@ class AuthRepositoryImpl({
   Future<void> signOut() async {
     try {
       await _remoteDataSource.signOut();
-    } on Failure {
+    } catch (_) {
       // sign out locally regardless
     }
-    await _sessionStorage.clear();
+    try {
+      await _sessionStorage.clear();
+    } catch (_) {
+      // already signed out in memory
+    }
   }
 }

@@ -10,7 +10,7 @@ import '../../domain/usecases/sign_out_use_case.dart';
 import '../../domain/usecases/sign_up_use_case.dart';
 import 'auth_state.dart';
 
-@injectable
+@lazySingleton
 class AuthCubit({
   required GetCurrentUserUseCase getCurrentUser,
   required final SignInUseCase _signIn,

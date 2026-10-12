@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/async_value.dart';
 import '../../../../core/error/failure_message.dart';
-import '../../../../core/error/failures.dart';
 import '../../../../core/l10n/build_context_extensions.dart';
 import '../cubit/posts_cubit.dart';
 import '../cubit/posts_state.dart';
@@ -37,9 +36,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           case AsyncData():
             Navigator.of(context).pop();
           case AsyncError(:final failure):
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(_failureMessage(failure))));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(failure.message(context.l10n))),
+            );
           case AsyncInitial() || AsyncLoading():
             break;
         }
@@ -82,6 +81,4 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       ),
     );
   }
-
-  String _failureMessage(Failure failure) => failure.message(context.l10n);
 }

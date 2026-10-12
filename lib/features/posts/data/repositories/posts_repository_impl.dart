@@ -17,6 +17,8 @@ class PostsRepositoryImpl(final PostsRemoteDataSource _remoteDataSource)
       return Result.ok([for (final post in posts) post.toEntity()]);
     } on Failure catch (failure) {
       return Result.error(failure);
+    } catch (error) {
+      return Result.error(GenericFailure(error));
     }
   }
 
@@ -33,6 +35,8 @@ class PostsRepositoryImpl(final PostsRemoteDataSource _remoteDataSource)
       return Result.ok(post.toEntity());
     } on Failure catch (failure) {
       return Result.error(failure);
+    } catch (error) {
+      return Result.error(GenericFailure(error));
     }
   }
 }
