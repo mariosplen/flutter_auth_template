@@ -6,6 +6,9 @@ Retrofit instead of the Supabase SDK. It comes with sign up, sign in, sign out
 and automatic session refresh, plus a posts tab and a profile tab as examples
 of authenticated requests.
 
+It is the starting point for new apps, with authentication, session refresh,
+networking, error handling and dependency injection already set up.
+
 ## Setup
 
 1. Run [`supabase.sql`](supabase.sql) once in the Supabase SQL Editor.
@@ -29,10 +32,13 @@ developing, turn off **Confirm email** in the Email provider settings.
 
 ## Architecture
 
-The layering is inspired by Reso Coder's
-[Flutter TDD Clean Architecture course](https://resocoder.com/flutter-clean-architecture-tdd/):
-each feature has a data, a domain and a presentation folder, with the
-repository interfaces and use cases in the domain. It differs in these places:
+The app uses
+[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html),
+adapted for this template. It is inspired a lot by Reso Coder's
+[Flutter TDD Clean Architecture course](https://resocoder.com/flutter-clean-architecture-tdd/).
+Each feature has a data, a domain and a presentation folder, with the
+repository interfaces and use cases in the domain. This is what it does
+differently from the course:
 
 - **`Result` instead of `Either`.** Repositories return a small hand-written
   sealed `Result<T>`, as in the
