@@ -51,8 +51,7 @@ differently from the course:
   operation, modelled on Riverpod's, rather than a sealed family of states.
 - **injectable.** The get_it registrations are generated instead of written by
   hand in an `injection_container.dart`.
-- **Models are separate from entities.** A model is mapped with `toEntity()`
-  and does not extend its entity.
+- **Models and Entities** use mappers and do not extend the entity.
 - **Plain use cases.** A use case is a callable class with no `UseCase` base
   class or `Params` object.
 - **Dio and Retrofit** instead of the `http` package.
