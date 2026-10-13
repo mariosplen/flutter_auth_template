@@ -1,8 +1,11 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:injectable/injectable.dart';
 
 import 'app_state.dart';
 
-class AppCubit({required bool isSignedIn}) extends HydratedCubit<AppState> {
+@injectable
+class AppCubit({@factoryParam required bool isSignedIn})
+    extends HydratedCubit<AppState> {
   this : super(AppState(isSignedIn: isSignedIn));
 
   void setThemeMode(AppThemeMode themeMode) =>

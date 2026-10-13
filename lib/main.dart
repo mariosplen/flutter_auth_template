@@ -46,8 +46,8 @@ class const MainApp({super.key}) extends StatelessWidget {
           },
         ),
         BlocProvider(
-          create: (context) => AppCubit(
-            isSignedIn: context.read<AuthCubit>().state.user != null,
+          create: (context) => getIt<AppCubit>(
+            param1: context.read<AuthCubit>().state.user != null,
           ),
         ),
       ],

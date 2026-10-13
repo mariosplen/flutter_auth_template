@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_auth_template/core/app/app_cubit.dart';
 import 'package:flutter_auth_template/core/di/injection.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -44,6 +45,8 @@ void main() {
         // then
         expect(getIt.isRegistered<Dio>(), isTrue);
         expect(getIt.isRegistered<FlutterSecureStorage>(), isTrue);
+
+        expect(getIt.isRegistered<AppCubit>(), isTrue);
 
         expect(getIt.isRegistered<AuthApi>(), isTrue);
         expect(getIt.isRegistered<SessionStorage>(), isTrue);
