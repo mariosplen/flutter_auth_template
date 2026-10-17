@@ -17,9 +17,11 @@ class ProfileCubit({
     if (state.profile case AsyncLoading()) return;
     emit(state.copyWith(profile: const AsyncLoading()));
     final result = await _getProfile(_userId);
-    emit(switch (result) {
-      Ok(:final value) => state.copyWith(profile: AsyncData(value)),
-      Error(:final failure) => state.copyWith(profile: AsyncError(failure)),
-    });
+    switch (result) {
+      case Ok(:final value):
+        emit(state.copyWith(profile: AsyncData(value)));
+      case Error(:final failure):
+        emit(state.copyWith(profile: AsyncError(failure)));
+    }
   }
 }

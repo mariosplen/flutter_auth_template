@@ -23,13 +23,12 @@ class AuthCubit({
     if (state.isLoading) return;
     emit(state.copyWith(signIn: const AsyncLoading()));
     final result = await _signIn(email: email, password: password);
-    emit(switch (result) {
-      Ok(value: final user) => state.copyWith(
-        user: user,
-        signIn: AsyncData(user),
-      ),
-      Error(:final failure) => state.copyWith(signIn: AsyncError(failure)),
-    });
+    switch (result) {
+      case Ok(value: final user):
+        emit(state.copyWith(user: user, signIn: AsyncData(user)));
+      case Error(:final failure):
+        emit(state.copyWith(signIn: AsyncError(failure)));
+    }
   }
 
   Future<void> signUp({
@@ -42,13 +41,12 @@ class AuthCubit({
     final result = await _signUp(email: email, password: password, name: name);
     switch (result) {
       case Ok(:final value):
-        emit(switch (value) {
-          SignedUp(:final user) => state.copyWith(
-            user: user,
-            signUp: AsyncData(value),
-          ),
-          ConfirmationRequired() => state.copyWith(signUp: AsyncData(value)),
-        });
+        switch (value) {
+          case SignedUp(:final user):
+            emit(state.copyWith(user: user, signUp: AsyncData(value)));
+          case ConfirmationRequired():
+            emit(state.copyWith(signUp: AsyncData(value)));
+        }
       case Error(:final failure):
         emit(state.copyWith(signUp: AsyncError(failure)));
     }
