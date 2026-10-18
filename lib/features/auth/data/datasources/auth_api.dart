@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
+import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../models/session_model.dart';
 import '../models/sign_up_response_model.dart';
 
 part 'auth_api.g.dart';
@@ -10,9 +9,7 @@ part 'auth_api.g.dart';
 const requiresAuthKey = 'requiresAuth';
 
 @RestApi()
-@lazySingleton
 abstract class AuthApi {
-  @factoryMethod
   factory AuthApi(Dio dio) = _AuthApi;
 
   @POST('/auth/v1/signup')
@@ -33,6 +30,7 @@ abstract class AuthApi {
     @Field('refresh_token') String refreshToken,
   );
 
+  // The scope=global option logs out from all devices.
   @POST('/auth/v1/logout?scope=local')
   Future<void> signOut();
 }

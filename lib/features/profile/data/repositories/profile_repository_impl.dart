@@ -1,20 +1,20 @@
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
-import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/profile.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../datasources/profile_remote_data_source.dart';
 import '../mappers/profile_mapper.dart';
 
-@LazySingleton(as: ProfileRepository)
 class ProfileRepositoryImpl(final ProfileRemoteDataSource _remoteDataSource)
     implements ProfileRepository {
   @override
-  Future<Result<Profile>> getProfile(String userId) async {
+  Future<Result<Profile>> getProfile() async {
     try {
-      final profile = await _remoteDataSource.getProfile(userId);
-      return Result.ok(profile.toEntity());
+      // Profiles has no email, so it comes from the auth user.
+      final user = await _remoteDataSource.getUser();
+      final profile = await _remoteDataSource.getProfile(user.id);
+      return Result.ok(profile.toEntity(email: user.email));
     } on Failure catch (failure) {
       return Result.error(failure);
     } catch (error) {

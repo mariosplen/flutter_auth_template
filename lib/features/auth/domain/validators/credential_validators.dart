@@ -1,3 +1,4 @@
+// Supabase's default minimum password length.
 const minPasswordLength = 6;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');

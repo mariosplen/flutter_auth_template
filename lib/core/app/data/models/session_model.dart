@@ -1,14 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'user_model.dart';
-
 part 'session_model.g.dart';
 
+/// Parses Supabase's token responses, and is also the form the session is
+/// stored in.
 @JsonSerializable(fieldRename: .snake)
 class SessionModel({
   required final String accessToken,
   required final String refreshToken,
-  required final UserModel user,
 }) {
   factory SessionModel.fromJson(Map<String, dynamic> json) =>
       _$SessionModelFromJson(json);

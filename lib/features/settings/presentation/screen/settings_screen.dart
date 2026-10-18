@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/app/app_cubit.dart';
-import '../../../../core/app/app_state.dart';
+import '../../../../core/app/presentation/cubit/app_cubit.dart';
+import '../../../../core/app/presentation/cubit/app_state.dart';
 import '../../../../core/l10n/build_context_extensions.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 

@@ -1,12 +1,9 @@
 import 'package:flutter_auth_template/core/error/result.dart';
 
 import '../entities/sign_up_result.dart';
-import '../entities/user.dart';
 
 abstract interface class AuthRepository {
-  User? get currentUser;
-
-  Future<Result<User>> signIn({
+  Future<Result<void>> signIn({
     required String email,
     required String password,
   });

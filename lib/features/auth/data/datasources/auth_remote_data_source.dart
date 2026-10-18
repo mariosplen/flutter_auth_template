@@ -1,13 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
-import 'package:injectable/injectable.dart';
 
 import '../../domain/failures/auth_failure.dart';
-import '../models/session_model.dart';
 import '../models/sign_up_response_model.dart';
 import 'auth_api.dart';
 
-@lazySingleton
 class AuthRemoteDataSource(final AuthApi _authApi) {
   Future<SessionModel> signIn({
     required String email,

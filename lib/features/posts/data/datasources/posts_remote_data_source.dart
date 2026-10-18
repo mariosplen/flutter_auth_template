@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
-import 'package:injectable/injectable.dart';
 
 import '../models/post_response_model.dart';
 import 'posts_api.dart';
 
-@lazySingleton
 class PostsRemoteDataSource(final PostsApi _postsApi) {
   Future<List<PostResponseModel>> getPosts() async {
     try {

@@ -1,5 +1,7 @@
 import 'failures.dart';
 
+/// The outcome of a repository call: [Ok] with a value or [Error] with a
+/// [Failure]. Repositories return it instead of throwing.
 sealed class const Result<T>() {
   const factory Result.ok(T value) = Ok._;
 

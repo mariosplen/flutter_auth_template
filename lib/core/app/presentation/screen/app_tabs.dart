@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/features/posts/presentation/cubit/posts_cubit.dart';
 import 'package:flutter_auth_template/features/posts/presentation/screen/posts_screen.dart';
+import 'package:flutter_auth_template/features/profile/presentation/cubit/profile_cubit.dart';
 import 'package:flutter_auth_template/features/profile/presentation/screen/profile_screen.dart';
 import 'package:flutter_auth_template/features/settings/presentation/screen/settings_screen.dart';
+import 'package:flutter_auth_template/injection_container.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../features/auth/presentation/cubit/auth_cubit.dart';
-import '../../features/posts/presentation/cubit/posts_cubit.dart';
-import '../../features/profile/presentation/cubit/profile_cubit.dart';
-import '../di/injection.dart';
-import '../l10n/build_context_extensions.dart';
-import 'app_cubit.dart';
-import 'app_state.dart';
+import '../cubit/app_cubit.dart';
+import '../cubit/app_state.dart';
 
 class const AppTabs({super.key}) extends StatelessWidget {
   @override
@@ -18,16 +17,14 @@ class const AppTabs({super.key}) extends StatelessWidget {
     final selectedTab = context.select(
       (AppCubit cubit) => cubit.state.selectedTab,
     );
+    // Created on every sign-in, so each user starts with fresh data.
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => getIt<PostsCubit>()..load()),
-        BlocProvider(
-          create: (context) => getIt<ProfileCubit>(
-            param1: context.read<AuthCubit>().state.user!.id,
-          )..load(),
-        ),
+        BlocProvider(create: (_) => sl<PostsCubit>()..load()),
+        BlocProvider(create: (_) => sl<ProfileCubit>()..load()),
       ],
       child: Scaffold(
+        // Keep every tab alive, so switching tabs does not reload them.
         body: IndexedStack(
           index: selectedTab.index,
           children: [

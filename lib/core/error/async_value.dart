@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 
 import 'failures.dart';
 
+/// The state of one async operation in a cubit state, modelled on
+/// Riverpod's `AsyncValue`: not started, loading, done or failed.
 sealed class AsyncValue<T> extends Equatable {
   const AsyncValue();
   @override

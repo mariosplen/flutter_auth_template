@@ -1,4 +1,4 @@
-import 'session_model.dart';
+import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 
 sealed class const SignUpResponseModel() {
   factory SignUpResponseModel.fromJson(Map<String, dynamic> json) =>

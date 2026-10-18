@@ -4,6 +4,7 @@ part 'profile_response_model.g.dart';
 
 @JsonSerializable(createToJson: false, fieldRename: .snake)
 class ProfileResponseModel({
+  required final String id,
   required final String name,
   required final DateTime createdAt,
 }) {

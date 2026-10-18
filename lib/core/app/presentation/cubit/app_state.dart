@@ -8,6 +8,7 @@ enum AppTab { posts, profile, settings }
 
 enum AppThemeMode { system, light, dark }
 
+/// Only [themeMode] is saved between launches, as the one field with
 @CopyWith()
 @JsonSerializable(ignoreUnannotated: true)
 class const AppState({

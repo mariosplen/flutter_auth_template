@@ -1,25 +1,19 @@
+import 'package:flutter_auth_template/core/app/data/mappers/session_mapper.dart';
+import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
-import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/sign_up_result.dart';
-import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
-import '../datasources/session_storage.dart';
-import '../mappers/user_mapper.dart';
 import '../models/sign_up_response_model.dart';
 
-@LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl({
   required final AuthRemoteDataSource _remoteDataSource,
-  required final SessionStorage _sessionStorage,
+  required final SessionRepository _sessionRepository,
 }) implements AuthRepository {
   @override
-  User? get currentUser => _sessionStorage.session?.user.toEntity();
-
-  @override
-  Future<Result<User>> signIn({
+  Future<Result<void>> signIn({
     required String email,
     required String password,
   }) async {
@@ -28,8 +22,8 @@ class AuthRepositoryImpl({
         email: email,
         password: password,
       );
-      await _sessionStorage.save(session);
-      return Result.ok(session.user.toEntity());
+      await _sessionRepository.save(session.toEntity());
+      return const Result.ok(null);
     } on Failure catch (failure) {
       return Result.error(failure);
     } catch (error) {
@@ -51,8 +45,8 @@ class AuthRepositoryImpl({
       );
       switch (response) {
         case SignedUpWithSession(:final session):
-          await _sessionStorage.save(session);
-          return Result.ok(SignedUp(session.user.toEntity()));
+          await _sessionRepository.save(session.toEntity());
+          return const Result.ok(SignedUp());
         case SignUpNeedsConfirmation():
           return const Result.ok(ConfirmationRequired());
       }
@@ -68,12 +62,12 @@ class AuthRepositoryImpl({
     try {
       await _remoteDataSource.signOut();
     } catch (_) {
-      // sign out locally regardless
+      // Sign out locally regardless.
     }
     try {
-      await _sessionStorage.clear();
+      await _sessionRepository.clear();
     } catch (_) {
-      // already signed out in memory
+      // Already signed out in memory.
     }
   }
 }

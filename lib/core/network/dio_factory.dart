@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 
+/// Creates the Dio client for Supabase. The URL and key default to the
+/// values passed with `--dart-define-from-file`.
 Dio createDio({
   String url = const String.fromEnvironment('SUPABASE_URL'),
   String publishableKey = const String.fromEnvironment(

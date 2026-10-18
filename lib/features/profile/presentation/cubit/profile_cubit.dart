@@ -1,22 +1,18 @@
 import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 
 import '../../domain/usecases/get_profile_use_case.dart';
 import 'profile_state.dart';
 
-@injectable
-class ProfileCubit({
-  required final GetProfileUseCase _getProfile,
-  @factoryParam required final String _userId,
-}) extends Cubit<ProfileState> {
+class ProfileCubit({required final GetProfileUseCase _getProfile})
+    extends Cubit<ProfileState> {
   this : super(const ProfileState());
 
   Future<void> load() async {
     if (state.profile case AsyncLoading()) return;
     emit(state.copyWith(profile: const AsyncLoading()));
-    final result = await _getProfile(_userId);
+    final result = await _getProfile();
     switch (result) {
       case Ok(:final value):
         emit(state.copyWith(profile: AsyncData(value)));
