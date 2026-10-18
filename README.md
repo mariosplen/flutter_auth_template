@@ -49,8 +49,6 @@ differently from the course:
 - **Cubits with `AsyncValue`.** Each feature has one cubit instead of a bloc
   with events. Its state is a single class holding one `AsyncValue` per
   operation, modelled on Riverpod's, rather than a sealed family of states.
-- **injectable.** The get_it registrations are generated instead of written by
-  hand in an `injection_container.dart`.
 - **Models and Entities** use mappers and do not extend the entity.
 - **Plain use cases.** A use case is a callable class with no `UseCase` base
   class or `Params` object.
