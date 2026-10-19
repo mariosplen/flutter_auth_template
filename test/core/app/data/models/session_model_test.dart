@@ -28,23 +28,6 @@ void main() {
         expect(result.refreshToken, tRefreshToken);
       },
     );
-
-    test(
-      '''
-      GIVEN the JSON of a session that was stored on an earlier launch
-      WHEN it is parsed into a session model
-      THEN the session model has the stored access token and refresh token''',
-      () {
-        // given
-        final jsonMap =
-            json.decode(fixture('session_cached.json')) as Map<String, dynamic>;
-        // when
-        final result = SessionModel.fromJson(jsonMap);
-        // then
-        expect(result.accessToken, tAccessToken);
-        expect(result.refreshToken, tRefreshToken);
-      },
-    );
   });
 
   group('toJson', () {

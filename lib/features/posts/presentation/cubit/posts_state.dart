@@ -6,15 +6,10 @@ import 'package:flutter_auth_template/features/posts/domain/entities/post.dart';
 part 'posts_state.g.dart';
 
 @CopyWith()
-class PostsState extends Equatable {
-  const new({
-    this.posts = const AsyncInitial(),
-    this.createPost = const AsyncInitial(),
-  });
-
-  final AsyncValue<List<Post>> posts;
-  final AsyncValue<Post> createPost;
-
+class const PostsState({
+  final AsyncValue<List<Post>> posts = const AsyncInitial(),
+  final AsyncValue<Post> createPost = const AsyncInitial(),
+}) extends Equatable {
   @override
   List<Object?> get props => [posts, createPost];
 }

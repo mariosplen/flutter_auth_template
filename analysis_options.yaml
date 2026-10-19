@@ -6,8 +6,6 @@ analyzer:
     - android/**
     - ios/**
     - "**/*.g.dart"
-    - "**/*.freezed.dart"
-    - "**/*.mocks.dart"
 
 linter:
   rules:

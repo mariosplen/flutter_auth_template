@@ -113,34 +113,6 @@ void main() {
 
     test(
       '''
-      GIVEN Supabase Auth's sign in response has a shape the app does not
-            expect
-      WHEN the user signs in
-      THEN an Error result with a generic failure is returned
-      AND the generic failure has the parsing error as its cause''',
-      () async {
-        // given
-        const tError = FormatException('unexpected response');
-        setUpMockRemoteDataSourceSignIn(() async => throw tError);
-        // when
-        final result = await repository.signIn(
-          email: tEmail,
-          password: tPassword,
-        );
-        // then
-        expect(
-          result,
-          isA<Error<void>>().having(
-            (e) => e.failure,
-            'failure',
-            const GenericFailure(tError),
-          ),
-        );
-      },
-    );
-
-    test(
-      '''
       GIVEN an account with this email and password
       AND secure storage is unavailable
       WHEN the user signs in

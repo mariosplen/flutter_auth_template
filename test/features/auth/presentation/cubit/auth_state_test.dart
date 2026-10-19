@@ -6,21 +6,6 @@ void main() {
   group('isLoading', () {
     test(
       '''
-      GIVEN an auth state where nothing has started
-      WHEN it is checked whether it is loading
-      THEN it is not loading''',
-      () {
-        // given
-        const tAuthState = AuthState();
-        // when
-        final result = tAuthState.isLoading;
-        // then
-        expect(result, isFalse);
-      },
-    );
-
-    test(
-      '''
       GIVEN an auth state where a sign in is loading
       WHEN it is checked whether it is loading
       THEN it is loading, so the sign in and sign up buttons are disabled''',

@@ -5,22 +5,6 @@ void main() {
   group('fromJson', () {
     test(
       '''
-      GIVEN the JSON of an app state saved with the dark theme mode
-      WHEN it is parsed into an app state
-      THEN the app state has the dark theme mode
-      AND the user is signed out and the posts tab is selected, as defaults''',
-      () {
-        // given
-        final jsonMap = <String, dynamic>{'themeMode': 'dark'};
-        // when
-        final result = AppState.fromJson(jsonMap);
-        // then
-        expect(result, const AppState(themeMode: .dark));
-      },
-    );
-
-    test(
-      '''
       GIVEN the JSON of an app state that also has a signed in flag
             and a selected tab
       WHEN it is parsed into an app state

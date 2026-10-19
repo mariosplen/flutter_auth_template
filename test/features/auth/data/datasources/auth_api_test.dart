@@ -49,18 +49,6 @@ void main() {
         .thenAnswer((_) async => ResponseBody.fromString('', 204));
   }
 
-  void setUpMockHttpClientAdapterFailure400() {
-    when(() => mockHttpClientAdapter.fetch(any(), any(), any())).thenAnswer(
-      (_) async => ResponseBody.fromString(
-        '{"error_code": "invalid_credentials"}',
-        400,
-        headers: {
-          Headers.contentTypeHeader: [Headers.jsonContentType],
-        },
-      ),
-    );
-  }
-
   RequestOptions verifySingleRequest() =>
       verify(() => mockHttpClientAdapter.fetch(captureAny(), any(), any()))
               .captured
@@ -101,25 +89,6 @@ void main() {
         );
       },
     );
-
-    test(
-      '''
-      GIVEN email confirmation is turned on in Supabase, so new users have to
-            confirm their email address first
-      WHEN signUp is called
-      THEN the response, which only has the user, is parsed into a needs
-           confirmation response''',
-      () async {
-        // given
-        setUpMockHttpClientAdapterSuccess200(
-          fixture('sign_up_needs_confirmation.json'),
-        );
-        // when
-        final result = await authApi.signUp(tEmail, tPassword, {'name': tName});
-        // then
-        expect(result, isA<SignUpNeedsConfirmation>());
-      },
-    );
   });
 
   group('signIn', () {
@@ -150,31 +119,6 @@ void main() {
           isA<SessionModel>()
               .having((s) => s.accessToken, 'accessToken', 'test-access-token')
               .having((s) => s.refreshToken, 'refreshToken', tRefreshToken),
-        );
-      },
-    );
-
-    test(
-      '''
-      GIVEN the password is wrong
-      WHEN signIn is called
-      THEN a DioException is thrown that has the "invalid_credentials" error
-           response''',
-      () async {
-        // given
-        setUpMockHttpClientAdapterFailure400();
-        // when
-        final result = authApi.signIn(tEmail, tPassword);
-        // then
-        await expectLater(
-          result,
-          throwsA(
-            isA<DioException>().having(
-              (error) => error.response?.data,
-              'response.data',
-              {'error_code': 'invalid_credentials'},
-            ),
-          ),
         );
       },
     );

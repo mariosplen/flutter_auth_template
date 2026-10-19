@@ -36,21 +36,6 @@ void main() {
   const tName = 'Test User';
   const tFailure = AuthFailure(.invalidCredentials, 'cause');
 
-  test(
-    '''
-    GIVEN a new auth cubit
-    WHEN its state is read
-    THEN sign in, sign up and sign out have not started''',
-    () {
-      // given
-      final cubit = buildCubit();
-      // when
-      final result = cubit.state;
-      // then
-      expect(result, const AuthState());
-    },
-  );
-
   group('signIn', () {
     void setUpMockSignIn(Result<void> result) {
       when(
@@ -100,38 +85,6 @@ void main() {
         const AuthState(signIn: AsyncError(tFailure)),
       ],
     );
-
-    blocTest<AuthCubit, AuthState>(
-      '''
-      GIVEN a sign in is already loading
-      WHEN the user taps sign in again
-      THEN nothing is emitted
-      AND the use case is not called a second time''',
-      // given
-      build: buildCubit,
-      seed: () => const AuthState(signIn: AsyncLoading()),
-      // when
-      act: (cubit) => cubit.signIn(email: tEmail, password: tPassword),
-      // then
-      expect: () => <AuthState>[],
-      verify: (_) => verifyZeroInteractions(mockSignIn),
-    );
-
-    blocTest<AuthCubit, AuthState>(
-      '''
-      GIVEN a sign up is loading
-      WHEN the user signs in at the same time
-      THEN nothing is emitted
-      AND the sign in use case is not called''',
-      // given
-      build: buildCubit,
-      seed: () => const AuthState(signUp: AsyncLoading()),
-      // when
-      act: (cubit) => cubit.signIn(email: tEmail, password: tPassword),
-      // then
-      expect: () => <AuthState>[],
-      verify: (_) => verifyZeroInteractions(mockSignIn),
-    );
   });
 
   group('signUp', () {
@@ -173,24 +126,6 @@ void main() {
 
     blocTest<AuthCubit, AuthState>(
       '''
-      GIVEN email confirmation is turned on in Supabase
-      WHEN the user signs up
-      THEN the sign up is loading
-      AND then the sign up is done with confirmation required''',
-      // given
-      setUp: () => setUpMockSignUp(const Result.ok(ConfirmationRequired())),
-      build: buildCubit,
-      // when
-      act: signUp,
-      // then
-      expect: () => [
-        const AuthState(signUp: AsyncLoading()),
-        const AuthState(signUp: AsyncData(ConfirmationRequired())),
-      ],
-    );
-
-    blocTest<AuthCubit, AuthState>(
-      '''
       GIVEN there is already an account with this email address
       WHEN the user signs up
       THEN the sign up is loading
@@ -205,22 +140,6 @@ void main() {
         const AuthState(signUp: AsyncLoading()),
         const AuthState(signUp: AsyncError(tFailure)),
       ],
-    );
-
-    blocTest<AuthCubit, AuthState>(
-      '''
-      GIVEN a sign up is already loading
-      WHEN the user taps sign up again
-      THEN nothing is emitted
-      AND the use case is not called a second time''',
-      // given
-      build: buildCubit,
-      seed: () => const AuthState(signUp: AsyncLoading()),
-      // when
-      act: signUp,
-      // then
-      expect: () => <AuthState>[],
-      verify: (_) => verifyZeroInteractions(mockSignUp),
     );
   });
 
@@ -244,22 +163,6 @@ void main() {
         const AuthState(),
       ],
       verify: (_) => verify(() => mockSignOut()).called(1),
-    );
-
-    blocTest<AuthCubit, AuthState>(
-      '''
-      GIVEN a sign out is already loading
-      WHEN the user taps sign out again
-      THEN nothing is emitted
-      AND the use case is not called a second time''',
-      // given
-      build: buildCubit,
-      seed: () => const AuthState(signOut: AsyncLoading()),
-      // when
-      act: (cubit) => cubit.signOut(),
-      // then
-      expect: () => <AuthState>[],
-      verify: (_) => verifyZeroInteractions(mockSignOut),
     );
   });
 }

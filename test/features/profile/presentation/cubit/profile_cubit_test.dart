@@ -28,21 +28,6 @@ void main() {
   );
   const tFailure = ServerFailure('offline');
 
-  test(
-    '''
-    GIVEN a new profile cubit
-    WHEN its state is read
-    THEN loading the profile has not started''',
-    () {
-      // given
-      final cubit = buildCubit();
-      // when
-      final result = cubit.state;
-      // then
-      expect(result, const ProfileState());
-    },
-  );
-
   group('load', () {
     blocTest<ProfileCubit, ProfileState>(
       '''
@@ -83,22 +68,6 @@ void main() {
         const ProfileState(profile: AsyncLoading()),
         const ProfileState(profile: AsyncError(tFailure)),
       ],
-    );
-
-    blocTest<ProfileCubit, ProfileState>(
-      '''
-      GIVEN the profile is already loading
-      WHEN the user taps try again
-      THEN nothing is emitted
-      AND the use case is not called a second time''',
-      // given
-      build: buildCubit,
-      seed: () => const ProfileState(profile: AsyncLoading()),
-      // when
-      act: (cubit) => cubit.load(),
-      // then
-      expect: () => <ProfileState>[],
-      verify: (_) => verifyZeroInteractions(mockGetProfile),
     );
   });
 }

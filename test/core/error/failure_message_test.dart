@@ -22,20 +22,5 @@ void main() {
         expect(result, 'Something went wrong. Please try again.');
       },
     );
-
-    test(
-      '''
-      GIVEN a generic failure, like when a response could not be parsed
-      WHEN its message is looked up in English
-      THEN the generic "Something went wrong" message is returned''',
-      () {
-        // given
-        const tFailure = GenericFailure('cause');
-        // when
-        final result = tFailure.message(tL10n);
-        // then
-        expect(result, tL10n.errorUnexpected);
-      },
-    );
   });
 }

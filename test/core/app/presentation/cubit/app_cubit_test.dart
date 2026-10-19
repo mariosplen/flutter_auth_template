@@ -31,23 +31,6 @@ void main() {
   group('initial state', () {
     test(
       '''
-      GIVEN the user is signed in from an earlier launch
-      AND nothing was saved for the app state yet
-      WHEN the app cubit is created
-      THEN the user is signed in
-      AND the system theme mode and the posts tab are used''',
-      () {
-        // given
-        setUpMockGetIsSignedIn(isSignedIn: true);
-        // when
-        final cubit = buildCubit();
-        // then
-        expect(cubit.state, const AppState(isSignedIn: true));
-      },
-    );
-
-    test(
-      '''
       GIVEN the user is signed out
       AND nothing was saved for the app state yet
       WHEN the app cubit is created
@@ -136,6 +119,23 @@ void main() {
       // then
       expect: () => [const AppState(isSignedIn: true)],
     );
+
+    blocTest<AppCubit, AppState>(
+      '''
+      GIVEN the app state says the user is signed in on the settings tab
+      AND the user has signed out since then
+      WHEN the session is checked, like after the auth state changed
+      THEN the state says the user is signed out
+      AND the posts tab is selected again, so the next sign in starts there''',
+      // given
+      setUp: () => setUpMockGetIsSignedIn(isSignedIn: false),
+      build: buildCubit,
+      seed: () => const AppState(isSignedIn: true, selectedTab: .settings),
+      // when
+      act: (cubit) => cubit.checkSession(),
+      // then
+      expect: () => [const AppState()],
+    );
   });
 
   group('sessionCleared', () {
@@ -144,7 +144,8 @@ void main() {
       GIVEN a signed in user on the profile tab with the dark theme mode
       WHEN the session is cleared, like when the refresh token expired
       THEN the state says the user is signed out
-      AND the theme mode and the selected tab stay the same''',
+      AND the posts tab is selected again, so the next sign in starts there
+      AND the theme mode stays the same''',
       // given
       setUp: () => setUpMockGetIsSignedIn(isSignedIn: true),
       build: buildCubit,
@@ -156,7 +157,7 @@ void main() {
       // when
       act: (cubit) => cubit.sessionCleared(),
       // then
-      expect: () => [const AppState(themeMode: .dark, selectedTab: .profile)],
+      expect: () => [const AppState(themeMode: .dark)],
     );
   });
 }

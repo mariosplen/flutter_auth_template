@@ -5,13 +5,15 @@ void main() {
   group('createDio', () {
     test(
       '''
-      GIVEN the app was started without --dart-define-from-file, so there is
-            no Supabase URL and no publishable key
+      GIVEN a Supabase URL
+      AND no publishable key
       WHEN the Dio client is created
       THEN a StateError is thrown that says how to run the app''',
       () async {
+        // given
+        const tUrl = 'https://test-project.supabase.co';
         // when
-        final result = Future.sync(createDio);
+        final result = Future.sync(() => createDio(url: tUrl));
         // then
         await expectLater(
           result,
@@ -23,22 +25,6 @@ void main() {
             ),
           ),
         );
-      },
-    );
-
-    test(
-      '''
-      GIVEN a Supabase URL
-      AND no publishable key
-      WHEN the Dio client is created
-      THEN a StateError is thrown''',
-      () async {
-        // given
-        const tUrl = 'https://test-project.supabase.co';
-        // when
-        final result = Future.sync(() => createDio(url: tUrl));
-        // then
-        await expectLater(result, throwsA(isA<StateError>()));
       },
     );
 

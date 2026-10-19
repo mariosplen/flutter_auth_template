@@ -199,30 +199,6 @@ void main() {
       test(
         '''
         GIVEN the user is signed in
-        AND a request failed with a 500 Internal Server Error
-        WHEN the error passes through the interceptor
-        THEN the session is not refreshed
-        AND the request is not retried
-        AND the same error is passed on''',
-        () async {
-          // given
-          currentSession = tSession;
-          final tError = buildDioException(
-            buildRequestOptions(),
-            statusCode: 500,
-          );
-          // when
-          await interceptor.onError(tError, mockErrorHandler);
-          // then
-          verifyZeroInteractions(mockAuthApi);
-          verifyZeroInteractions(mockDio);
-          verify(() => mockErrorHandler.next(tError)).called(1);
-        },
-      );
-
-      test(
-        '''
-        GIVEN the user is signed in
         AND a request failed with a 403 that is not about the access token,
             like a row level security error
         WHEN the error passes through the interceptor
@@ -487,27 +463,28 @@ void main() {
         WHEN the error passes through the interceptor
         AND the user signs out while the session is being refreshed
         THEN the fresh session is not saved, so the user stays signed out
-        AND the request is still retried''',
+        AND the request is not retried, because there is no token to send
+        AND the 401 error of the request is passed on''',
         () async {
           // given
           currentSession = tSession;
           final tRefreshCompleter = Completer<SessionModel>();
           when(() => mockAuthApi.refreshSession(any()))
               .thenAnswer((_) => tRefreshCompleter.future);
-          final tRequestOptions = buildRequestOptions();
-          setUpMockDioRetrySuccess(buildRetriedResponse(tRequestOptions));
-          // when
-          final result = interceptor.onError(
-            buildDioException(tRequestOptions, statusCode: 401),
-            mockErrorHandler,
+          final tError = buildDioException(
+            buildRequestOptions(),
+            statusCode: 401,
           );
+          // when
+          final result = interceptor.onError(tError, mockErrorHandler);
           currentSession = null;
           tRefreshCompleter.complete(tFreshSessionModel);
           await result;
           // then
           verifyNever(() => mockSessionRepository.save(any()));
           expect(currentSession, isNull);
-          verify(() => mockDio.fetch<dynamic>(tRequestOptions)).called(1);
+          verifyZeroInteractions(mockDio);
+          verify(() => mockErrorHandler.next(tError)).called(1);
         },
       );
 

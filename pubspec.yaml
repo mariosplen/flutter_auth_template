@@ -1,5 +1,5 @@
 name: flutter_auth_template
-description: "A new Flutter project."
+description: "A Flutter starter app with Supabase email and password authentication."
 publish_to: "none"
 version: 0.1.0+1
 

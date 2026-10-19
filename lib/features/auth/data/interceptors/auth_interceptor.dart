@@ -52,6 +52,8 @@ class AuthInterceptor({
       } on DioException catch (error) {
         return handler.next(error);
       }
+      // signed out during the refresh, so there is no token to retry with
+      if (_sessionRepository.session == null) return handler.next(err);
     }
 
     options.extra[_retriedKey] = true;

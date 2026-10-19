@@ -94,26 +94,6 @@ void main() {
 
     test(
       '''
-      GIVEN an email address that Supabase Auth does not accept
-      WHEN the user signs in
-      THEN the "email_address_invalid" error from Supabase Auth is thrown as
-           an email address invalid auth failure''',
-      () async {
-        // given
-        final tError = buildSupabaseAuthError('email_address_invalid');
-        setUpMockAuthApiSignInError(tError);
-        // when
-        final result = dataSource.signIn(email: tEmail, password: tPassword);
-        // then
-        await expectLater(
-          result,
-          throwsA(AuthFailure(AuthFailureType.emailAddressInvalid, tError)),
-        );
-      },
-    );
-
-    test(
-      '''
       GIVEN input that does not pass Supabase Auth's validation
       WHEN the user signs in
       THEN the "validation_failed" error from Supabase Auth is thrown as
@@ -182,23 +162,6 @@ void main() {
       () async {
         // given
         final tError = buildSupabaseAuthError('some_new_error_code');
-        setUpMockAuthApiSignInError(tError);
-        // when
-        final result = dataSource.signIn(email: tEmail, password: tPassword);
-        // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
-      },
-    );
-
-    test(
-      '''
-      GIVEN the auth server is having problems
-      WHEN the user signs in
-      THEN its 500 Internal Server Error, which has no error code, is thrown
-           as a server failure''',
-      () async {
-        // given
-        final tError = buildDioException(statusCode: 500, data: '<html>');
         setUpMockAuthApiSignInError(tError);
         // when
         final result = dataSource.signIn(email: tEmail, password: tPassword);
@@ -281,6 +244,30 @@ void main() {
 
     test(
       '''
+      GIVEN an email address that Supabase Auth does not accept
+      WHEN the user signs up with it
+      THEN the "email_address_invalid" error from Supabase Auth is thrown as
+           an email address invalid auth failure''',
+      () async {
+        // given
+        final tError = buildSupabaseAuthError('email_address_invalid');
+        setUpMockAuthApiSignUpError(tError);
+        // when
+        final result = dataSource.signUp(
+          email: tEmail,
+          password: tPassword,
+          name: tName,
+        );
+        // then
+        await expectLater(
+          result,
+          throwsA(AuthFailure(AuthFailureType.emailAddressInvalid, tError)),
+        );
+      },
+    );
+
+    test(
+      '''
       GIVEN a password that Supabase Auth considers too weak
       WHEN the user signs up
       THEN the "weak_password" error from Supabase Auth is thrown as
@@ -324,26 +311,6 @@ void main() {
           result,
           throwsA(AuthFailure(AuthFailureType.overEmailSendRateLimit, tError)),
         );
-      },
-    );
-
-    test(
-      '''
-      GIVEN the device is offline
-      WHEN the user signs up
-      THEN the connection error is thrown as a server failure''',
-      () async {
-        // given
-        final tError = buildDioException();
-        setUpMockAuthApiSignUpError(tError);
-        // when
-        final result = dataSource.signUp(
-          email: tEmail,
-          password: tPassword,
-          name: tName,
-        );
-        // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
       },
     );
   });

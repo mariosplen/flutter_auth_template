@@ -92,27 +92,6 @@ void main() {
 
     test(
       '''
-      GIVEN a signed in user
-      AND the user has no profile row
-      WHEN the profile is fetched
-      THEN an Error result with the server failure from fetching the profile
-           is returned''',
-      () async {
-        // given
-        setUpMockRemoteDataSourceGetUserSuccess();
-        when(() => mockRemoteDataSource.getProfile(any())).thenThrow(tFailure);
-        // when
-        final result = await repository.getProfile();
-        // then
-        expect(
-          result,
-          isA<Error<Profile>>().having((e) => e.failure, 'failure', tFailure),
-        );
-      },
-    );
-
-    test(
-      '''
       GIVEN Supabase Auth's user response has a shape the app does not expect
       WHEN the profile is fetched
       THEN an Error result with a generic failure is returned

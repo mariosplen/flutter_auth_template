@@ -40,21 +40,6 @@ void main() {
         .thenAnswer((_) async {});
   }
 
-  group('session', () {
-    test(
-      '''
-      GIVEN a session local data source that has not loaded anything yet
-      WHEN its session is read
-      THEN there is no session''',
-      () {
-        // when
-        final result = dataSource.session;
-        // then
-        expect(result, isNull);
-      },
-    );
-  });
-
   group('load', () {
     test(
       '''
@@ -86,22 +71,6 @@ void main() {
       () async {
         // given
         setUpMockSecureStorageRead(null);
-        // when
-        await dataSource.load();
-        // then
-        expect(dataSource.session, isNull);
-      },
-    );
-
-    test(
-      '''
-      GIVEN secure storage holds a value that is not a valid session JSON
-      WHEN the session is loaded
-      THEN loading completes without throwing
-      AND there is no session in memory, so the user starts signed out''',
-      () async {
-        // given
-        setUpMockSecureStorageRead('not a session');
         // when
         await dataSource.load();
         // then

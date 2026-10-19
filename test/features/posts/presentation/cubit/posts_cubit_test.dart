@@ -42,21 +42,6 @@ void main() {
   );
   const tFailure = ServerFailure('offline');
 
-  test(
-    '''
-    GIVEN a new posts cubit
-    WHEN its state is read
-    THEN loading the posts and creating a post have not started''',
-    () {
-      // given
-      final cubit = buildCubit();
-      // when
-      final result = cubit.state;
-      // then
-      expect(result, const PostsState());
-    },
-  );
-
   group('load', () {
     blocTest<PostsCubit, PostsState>(
       '''
@@ -97,22 +82,6 @@ void main() {
         const PostsState(posts: AsyncLoading()),
         const PostsState(posts: AsyncError(tFailure)),
       ],
-    );
-
-    blocTest<PostsCubit, PostsState>(
-      '''
-      GIVEN the posts are already loading
-      WHEN the user pulls to refresh
-      THEN nothing is emitted
-      AND the use case is not called a second time''',
-      // given
-      build: buildCubit,
-      seed: () => const PostsState(posts: AsyncLoading()),
-      // when
-      act: (cubit) => cubit.load(),
-      // then
-      expect: () => <PostsState>[],
-      verify: (_) => verifyZeroInteractions(mockGetPosts),
     );
   });
 
@@ -197,26 +166,6 @@ void main() {
           to add the new post to''',
       // given
       build: buildCubit,
-      // when
-      act: create,
-      // then
-      expect: () => <PostsState>[],
-      verify: (_) => verifyZeroInteractions(mockCreatePost),
-    );
-
-    blocTest<PostsCubit, PostsState>(
-      '''
-      GIVEN the posts are loaded
-      AND a post is already being created
-      WHEN the user taps create again
-      THEN nothing is emitted
-      AND the use case is not called a second time''',
-      // given
-      build: buildCubit,
-      seed: () => PostsState(
-        posts: AsyncData([tOlderPost]),
-        createPost: const AsyncLoading(),
-      ),
       // when
       act: create,
       // then

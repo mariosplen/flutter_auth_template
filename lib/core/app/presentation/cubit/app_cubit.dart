@@ -13,11 +13,18 @@ class AppCubit({required final GetIsSignedInUseCase _isSignedIn})
   void selectTab(AppTab tab) => emit(state.copyWith(selectedTab: tab));
 
   /// Called after every change to the AuthCubit.
-  void checkSession() => emit(state.copyWith(isSignedIn: _isSignedIn()));
+  void checkSession() {
+    if (_isSignedIn()) {
+      emit(state.copyWith(isSignedIn: true));
+    } else {
+      sessionCleared();
+    }
+  }
 
   /// Called when the session has been cleared, such as when the user signs
-  /// out or the session expires.
-  void sessionCleared() => emit(state.copyWith(isSignedIn: false));
+  /// out or the session expires. The next sign in starts on the posts tab.
+  void sessionCleared() =>
+      emit(state.copyWith(isSignedIn: false, selectedTab: .posts));
 
   // Hydration replaces the constructor's state, so keep its isSignedIn value.
   @override

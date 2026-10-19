@@ -45,7 +45,7 @@ class const App({super.key}) extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(context.l10n.confirmEmail)),
                 );
-                Navigator.of(context).pop();
+                Navigator.of(context).popUntil((route) => route.isFirst);
               case AsyncError(:final failure):
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(failure.authMessage(context.l10n))),

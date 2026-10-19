@@ -20,7 +20,7 @@ void main() {
         // when
         final result = tFailure.authMessage(tL10n);
         // then
-        expect(result, tL10n.errorEmailAddressInvalid);
+        expect(result, "This email address isn't valid.");
       },
     );
 
@@ -35,7 +35,11 @@ void main() {
         // when
         final result = tFailure.authMessage(tL10n);
         // then
-        expect(result, tL10n.errorValidationFailed);
+        expect(
+          result,
+          "Some of the details you entered aren't valid. "
+          'Check them and try again.',
+        );
       },
     );
 
@@ -81,7 +85,7 @@ void main() {
         // when
         final result = tFailure.authMessage(tL10n);
         // then
-        expect(result, tL10n.errorUserAlreadyExists);
+        expect(result, 'An account with this email already exists.');
       },
     );
 
@@ -111,7 +115,7 @@ void main() {
         // when
         final result = tFailure.authMessage(tL10n);
         // then
-        expect(result, tL10n.errorOverRequestRateLimit);
+        expect(result, 'Too many requests. Wait a moment and try again.');
       },
     );
 
@@ -126,7 +130,10 @@ void main() {
         // when
         final result = tFailure.authMessage(tL10n);
         // then
-        expect(result, tL10n.errorOverEmailSendRateLimit);
+        expect(
+          result,
+          'Too many emails sent. Wait a few minutes before trying again.',
+        );
       },
     );
 

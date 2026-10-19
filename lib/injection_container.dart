@@ -79,8 +79,7 @@ Future<void> init() async {
   sl.registerLazySingleton(createDio);
   sl.registerLazySingleton(() => const FlutterSecureStorage());
 
-  // Load the session into memory before any repository that needs it is
-  // created.
+  // AppCubit reads isSignedIn when it's created, so load the session first.
   await sl<SessionRepository>().load();
 
   // Add this last because it needs Dio and AuthApi.

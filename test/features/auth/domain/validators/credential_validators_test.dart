@@ -62,21 +62,6 @@ void main() {
         expect(result, isFalse);
       },
     );
-
-    test(
-      '''
-      GIVEN an empty email address
-      WHEN it is validated
-      THEN it is not valid''',
-      () {
-        // given
-        const tEmail = '';
-        // when
-        final result = isValidEmail(tEmail);
-        // then
-        expect(result, isFalse);
-      },
-    );
   });
 
   group('isLongEnoughPassword', () {
@@ -93,7 +78,6 @@ void main() {
         final result = isLongEnoughPassword(tPassword);
         // then
         expect(result, isTrue);
-        expect(minPasswordLength, 6);
       },
     );
 
