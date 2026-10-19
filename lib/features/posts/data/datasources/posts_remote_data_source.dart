@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
-
-import '../models/post_response_model.dart';
-import 'posts_api.dart';
+import 'package:flutter_auth_template/features/posts/data/datasources/posts_api.dart';
+import 'package:flutter_auth_template/features/posts/data/models/post_response_model.dart';
 
 class PostsRemoteDataSource(final PostsApi _postsApi) {
   Future<List<PostResponseModel>> getPosts() async {

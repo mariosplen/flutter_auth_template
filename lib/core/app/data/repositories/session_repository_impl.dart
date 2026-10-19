@@ -1,7 +1,7 @@
-import '../../domain/entities/session.dart';
-import '../../domain/repositories/session_repository.dart';
-import '../datasources/session_local_data_source.dart';
-import '../mappers/session_mapper.dart';
+import 'package:flutter_auth_template/core/app/data/datasources/session_local_data_source.dart';
+import 'package:flutter_auth_template/core/app/data/mappers/session_mapper.dart';
+import 'package:flutter_auth_template/core/app/domain/entities/session.dart';
+import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
 
 class SessionRepositoryImpl(final SessionLocalDataSource _localDataSource)
     implements SessionRepository {

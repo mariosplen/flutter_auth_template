@@ -3,17 +3,19 @@ import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
 import 'package:flutter_auth_template/core/widgets/failure_view.dart';
 import 'package:flutter_auth_template/core/widgets/loading_view.dart';
+import 'package:flutter_auth_template/features/posts/domain/entities/post.dart';
 import 'package:flutter_auth_template/features/posts/presentation/cubit/posts_cubit.dart';
+import 'package:flutter_auth_template/features/posts/presentation/screen/create_post_screen.dart';
+import 'package:flutter_auth_template/features/posts/presentation/widgets/no_posts_view.dart';
+import 'package:flutter_auth_template/features/posts/presentation/widgets/posts_list.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../widgets/no_posts_view.dart';
-import '../widgets/posts_list.dart';
-import 'create_post_screen.dart';
 
 class const PostsScreen({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final posts = context.select((PostsCubit cubit) => cubit.state.posts);
+    final posts = context.select<PostsCubit, AsyncValue<List<Post>>>(
+      (cubit) => cubit.state.posts,
+    );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.postsTab)),
       body: switch (posts) {

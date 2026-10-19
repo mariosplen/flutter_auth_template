@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
 
 class const NoPostsView({super.key}) extends StatelessWidget {
   @override

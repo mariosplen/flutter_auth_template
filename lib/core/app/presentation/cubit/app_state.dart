@@ -16,8 +16,7 @@ class const AppState({
   final bool isSignedIn = false,
   final AppTab selectedTab = .posts,
 }) extends Equatable {
-  factory AppState.fromJson(Map<String, dynamic> json) =>
-      _$AppStateFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$AppStateFromJson(json);
 
   Map<String, dynamic> toJson() => _$AppStateToJson(this);
 

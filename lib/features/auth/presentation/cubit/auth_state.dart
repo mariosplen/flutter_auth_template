@@ -2,7 +2,7 @@ import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_auth_template/core/error/async_value.dart';
 
-import '../../domain/entities/sign_up_result.dart';
+import 'package:flutter_auth_template/features/auth/domain/entities/sign_up_result.dart';
 
 part 'auth_state.g.dart';
 

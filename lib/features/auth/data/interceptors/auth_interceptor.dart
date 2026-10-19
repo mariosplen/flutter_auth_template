@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_auth_template/core/app/data/mappers/session_mapper.dart';
 import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
 
-import '../datasources/auth_api.dart';
+import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
 
 /// Adds the access token to requests. When a request comes back
 /// unauthorized, it refreshes the session once and retries the request.
@@ -15,7 +15,8 @@ class AuthInterceptor({
   // Marks a retried request, so it is never retried twice.
   static const _retriedKey = 'retried';
 
-  // Stores the refresh in progress, shared by requests that fail at the same time.
+  // Stores the refresh in progress, shared by requests that fail at the same
+  // time.
   Future<void>? _refreshing;
 
   @override

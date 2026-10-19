@@ -9,8 +9,7 @@ class SessionModel({
   required final String accessToken,
   required final String refreshToken,
 }) {
-  factory SessionModel.fromJson(Map<String, dynamic> json) =>
-      _$SessionModelFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$SessionModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SessionModelToJson(this);
 }

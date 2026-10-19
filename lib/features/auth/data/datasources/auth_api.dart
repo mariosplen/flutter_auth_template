@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
+import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:retrofit/retrofit.dart';
-
-import '../models/sign_up_response_model.dart';
 
 part 'auth_api.g.dart';
 
@@ -10,7 +9,7 @@ const requiresAuthKey = 'requiresAuth';
 
 @RestApi()
 abstract class AuthApi {
-  factory AuthApi(Dio dio) = _AuthApi;
+  factory(Dio dio) = _AuthApi;
 
   @POST('/auth/v1/signup')
   @Extra({requiresAuthKey: false})

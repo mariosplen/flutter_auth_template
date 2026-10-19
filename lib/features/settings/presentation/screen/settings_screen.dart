@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/app/presentation/cubit/app_cubit.dart';
+import 'package:flutter_auth_template/core/app/presentation/cubit/app_state.dart';
 import 'package:flutter_auth_template/core/error/async_value.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/app/presentation/cubit/app_cubit.dart';
-import '../../../../core/app/presentation/cubit/app_state.dart';
-import '../../../../core/l10n/build_context_extensions.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
 
 class const SettingsScreen({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isSigningOut = context.select(
-      (AuthCubit cubit) => cubit.state.signOut is AsyncLoading,
+    final isSigningOut = context.select<AuthCubit, bool>(
+      (cubit) => cubit.state.signOut is AsyncLoading,
     );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.settingsTab)),
@@ -33,7 +32,9 @@ class const SettingsScreen({super.key}) extends StatelessWidget {
                 ),
             ],
             selected: {
-              context.select((AppCubit cubit) => cubit.state.themeMode),
+              context.select<AppCubit, AppThemeMode>(
+                (cubit) => cubit.state.themeMode,
+              ),
             },
             onSelectionChanged: (selection) =>
                 context.read<AppCubit>().setThemeMode(selection.single),

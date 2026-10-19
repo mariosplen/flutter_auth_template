@@ -7,7 +7,7 @@ part 'posts_state.g.dart';
 
 @CopyWith()
 class PostsState extends Equatable {
-  const PostsState({
+  const new({
     this.posts = const AsyncInitial(),
     this.createPost = const AsyncInitial(),
   });

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../error/failure_message.dart';
-import '../error/failures.dart';
-import '../l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/core/error/failure_message.dart';
+import 'package:flutter_auth_template/core/error/failures.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
 
 class const FailureView({
-  super.key,
   required final Failure failure,
   required final VoidCallback onRetry,
+  super.key,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

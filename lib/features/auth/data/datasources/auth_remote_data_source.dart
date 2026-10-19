@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
-
-import '../../domain/failures/auth_failure.dart';
-import '../models/sign_up_response_model.dart';
-import 'auth_api.dart';
+import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
+import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
+import 'package:flutter_auth_template/features/auth/domain/failures/auth_failure.dart';
 
 class AuthRemoteDataSource(final AuthApi _authApi) {
   Future<SessionModel> signIn({
@@ -39,20 +38,22 @@ class AuthRemoteDataSource(final AuthApi _authApi) {
   }
 
   Failure _toFailure(DioException error) {
-    final AuthFailureType? type = switch (error.response?.data) {
-      {'error_code': final code} => switch (code) {
-        'email_address_invalid' => .emailAddressInvalid,
-        'validation_failed' => .validationFailed,
-        'invalid_credentials' => .invalidCredentials,
-        'email_not_confirmed' => .emailNotConfirmed,
-        'user_already_exists' => .userAlreadyExists,
-        'weak_password' => .weakPassword,
-        'over_request_rate_limit' => .overRequestRateLimit,
-        'over_email_send_rate_limit' => .overEmailSendRateLimit,
-        _ => null,
-      },
-      _ => null,
-    };
+    final type = _failureType(error.response?.data);
     return type == null ? ServerFailure(error) : AuthFailure(type, error);
   }
+
+  AuthFailureType? _failureType(Object? data) => switch (data) {
+    {'error_code': final code} => switch (code) {
+      'email_address_invalid' => .emailAddressInvalid,
+      'validation_failed' => .validationFailed,
+      'invalid_credentials' => .invalidCredentials,
+      'email_not_confirmed' => .emailNotConfirmed,
+      'user_already_exists' => .userAlreadyExists,
+      'weak_password' => .weakPassword,
+      'over_request_rate_limit' => .overRequestRateLimit,
+      'over_email_send_rate_limit' => .overEmailSendRateLimit,
+      _ => null,
+    },
+    _ => null,
+  };
 }

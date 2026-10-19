@@ -1,8 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../models/session_model.dart';
 
 /// Saves the session in secure storage and keeps a copy in memory, so the
 /// token can be read without waiting on storage.
@@ -19,7 +18,7 @@ class SessionLocalDataSource(final FlutterSecureStorage _storage) {
       _session = json == null
           ? null
           : SessionModel.fromJson(jsonDecode(json) as Map<String, dynamic>);
-    } catch (_) {
+    } on Object {
       // Unreadable session, so start signed out.
     }
   }

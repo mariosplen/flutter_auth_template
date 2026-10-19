@@ -8,6 +8,6 @@ class ProfileResponseModel({
   required final String name,
   required final DateTime createdAt,
 }) {
-  factory ProfileResponseModel.fromJson(Map<String, dynamic> json) =>
+  factory fromJson(Map<String, dynamic> json) =>
       _$ProfileResponseModelFromJson(json);
 }

@@ -4,11 +4,10 @@ import 'package:flutter_auth_template/core/app/presentation/cubit/app_cubit.dart
 import 'package:flutter_auth_template/core/app/presentation/screen/app.dart';
 import 'package:flutter_auth_template/core/l10n/app_localizations.dart';
 import 'package:flutter_auth_template/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:flutter_auth_template/injection_container.dart' as di;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'injection_container.dart' as di;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,8 +33,8 @@ class const MainApp({super.key}) extends StatelessWidget {
       child: Builder(
         builder: (context) => MaterialApp(
           darkTheme: ThemeData(brightness: .dark),
-          themeMode: context.select(
-            (AppCubit cubit) => cubit.state.themeMode.toThemeMode(),
+          themeMode: context.select<AppCubit, ThemeMode>(
+            (cubit) => cubit.state.themeMode.toThemeMode(),
           ),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

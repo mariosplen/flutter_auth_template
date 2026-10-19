@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/features/profile/domain/entities/profile.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/l10n/build_context_extensions.dart';
-import '../../domain/entities/profile.dart';
-
-class const ProfileDetails({super.key, required final Profile profile})
+class const ProfileDetails({required final Profile profile, super.key})
     extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

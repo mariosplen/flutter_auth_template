@@ -1,7 +1,6 @@
+import 'package:flutter_auth_template/core/app/domain/usecases/get_is_signed_in_use_case.dart';
+import 'package:flutter_auth_template/core/app/presentation/cubit/app_state.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-
-import '../../domain/usecases/get_is_signed_in_use_case.dart';
-import 'app_state.dart';
 
 /// App-wide hydrated state.
 class AppCubit({required final GetIsSignedInUseCase _isSignedIn})

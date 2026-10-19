@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/features/auth/domain/validators/credential_validators.dart';
+import 'package:flutter_auth_template/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:flutter_auth_template/features/auth/presentation/screen/sign_up_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/l10n/build_context_extensions.dart';
-import '../../domain/validators/credential_validators.dart';
-import '../cubit/auth_cubit.dart';
-import 'sign_up_screen.dart';
 
 class const SignInScreen({super.key}) extends StatefulWidget {
   @override
@@ -25,8 +24,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select(
-      (AuthCubit cubit) => cubit.state.isLoading,
+    final isLoading = context.select<AuthCubit, bool>(
+      (cubit) => cubit.state.isLoading,
     );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.signIn)),
@@ -66,9 +65,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     return FilledButton(
                       onPressed: isLoading || email.isEmpty || password.isEmpty
                           ? null
-                          : () {
+                          : () async {
                               if (_formKey.currentState!.validate()) {
-                                context.read<AuthCubit>().signIn(
+                                await context.read<AuthCubit>().signIn(
                                   email: email,
                                   password: password,
                                 );

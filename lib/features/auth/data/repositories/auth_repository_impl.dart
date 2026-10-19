@@ -2,11 +2,10 @@ import 'package:flutter_auth_template/core/app/data/mappers/session_mapper.dart'
 import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
-
-import '../../domain/entities/sign_up_result.dart';
-import '../../domain/repositories/auth_repository.dart';
-import '../datasources/auth_remote_data_source.dart';
-import '../models/sign_up_response_model.dart';
+import 'package:flutter_auth_template/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
+import 'package:flutter_auth_template/features/auth/domain/entities/sign_up_result.dart';
+import 'package:flutter_auth_template/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl({
   required final AuthRemoteDataSource _remoteDataSource,
@@ -26,7 +25,7 @@ class AuthRepositoryImpl({
       return const Result.ok(null);
     } on Failure catch (failure) {
       return Result.error(failure);
-    } catch (error) {
+    } on Object catch (error) {
       return Result.error(GenericFailure(error));
     }
   }
@@ -52,7 +51,7 @@ class AuthRepositoryImpl({
       }
     } on Failure catch (failure) {
       return Result.error(failure);
-    } catch (error) {
+    } on Object catch (error) {
       return Result.error(GenericFailure(error));
     }
   }
@@ -61,12 +60,12 @@ class AuthRepositoryImpl({
   Future<void> signOut() async {
     try {
       await _remoteDataSource.signOut();
-    } catch (_) {
+    } on Object {
       // Sign out locally regardless.
     }
     try {
       await _sessionRepository.clear();
-    } catch (_) {
+    } on Object {
       // Already signed out in memory.
     }
   }

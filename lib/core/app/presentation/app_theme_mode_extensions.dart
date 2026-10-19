@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'cubit/app_state.dart';
+import 'package:flutter_auth_template/core/app/presentation/cubit/app_state.dart';
 
 /// Converts to Flutter's [ThemeMode]. The state keeps its own enum so the
 /// cubit doesn't depend on Flutter.

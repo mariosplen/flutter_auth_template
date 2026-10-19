@@ -2,9 +2,8 @@ import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
 import 'package:flutter_auth_template/features/posts/domain/usecases/create_post_use_case.dart';
 import 'package:flutter_auth_template/features/posts/domain/usecases/get_posts_use_case.dart';
+import 'package:flutter_auth_template/features/posts/presentation/cubit/posts_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'posts_state.dart';
 
 class PostsCubit({
   required final GetPostsUseCase _getPosts,

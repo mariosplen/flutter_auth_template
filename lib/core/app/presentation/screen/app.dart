@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/app/presentation/cubit/app_cubit.dart';
+import 'package:flutter_auth_template/core/app/presentation/cubit/app_state.dart';
+import 'package:flutter_auth_template/core/app/presentation/screen/app_tabs.dart';
 import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
 import 'package:flutter_auth_template/features/auth/domain/entities/sign_up_result.dart';
@@ -8,17 +11,13 @@ import 'package:flutter_auth_template/features/auth/presentation/cubit/auth_stat
 import 'package:flutter_auth_template/features/auth/presentation/screen/sign_in_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/app_cubit.dart';
-import '../cubit/app_state.dart';
-import 'app_tabs.dart';
-
 /// Shows the tabs or the sign-in screen, and keeps the app state in sync
 /// with auth.
 class const App({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isSignedIn = context.select(
-      (AppCubit cubit) => cubit.state.isSignedIn,
+    final isSignedIn = context.select<AppCubit, bool>(
+      (cubit) => cubit.state.isSignedIn,
     );
     return MultiBlocListener(
       listeners: [

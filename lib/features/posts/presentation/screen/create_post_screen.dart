@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/error/async_value.dart';
+import 'package:flutter_auth_template/core/error/failure_message.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/features/posts/presentation/cubit/posts_cubit.dart';
+import 'package:flutter_auth_template/features/posts/presentation/cubit/posts_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/error/async_value.dart';
-import '../../../../core/error/failure_message.dart';
-import '../../../../core/l10n/build_context_extensions.dart';
-import '../cubit/posts_cubit.dart';
-import '../cubit/posts_state.dart';
 
 class const CreatePostScreen({super.key}) extends StatefulWidget {
   @override
@@ -25,8 +24,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isCreating = context.select(
-      (PostsCubit cubit) => cubit.state.createPost is AsyncLoading,
+    final isCreating = context.select<PostsCubit, bool>(
+      (cubit) => cubit.state.createPost is AsyncLoading,
     );
     return BlocListener<PostsCubit, PostsState>(
       listenWhen: (previous, current) =>

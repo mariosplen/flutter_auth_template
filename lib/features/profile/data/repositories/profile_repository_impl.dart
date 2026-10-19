@@ -1,10 +1,9 @@
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
-
-import '../../domain/entities/profile.dart';
-import '../../domain/repositories/profile_repository.dart';
-import '../datasources/profile_remote_data_source.dart';
-import '../mappers/profile_mapper.dart';
+import 'package:flutter_auth_template/features/profile/data/datasources/profile_remote_data_source.dart';
+import 'package:flutter_auth_template/features/profile/data/mappers/profile_mapper.dart';
+import 'package:flutter_auth_template/features/profile/domain/entities/profile.dart';
+import 'package:flutter_auth_template/features/profile/domain/repositories/profile_repository.dart';
 
 class ProfileRepositoryImpl(final ProfileRemoteDataSource _remoteDataSource)
     implements ProfileRepository {
@@ -17,7 +16,7 @@ class ProfileRepositoryImpl(final ProfileRemoteDataSource _remoteDataSource)
       return Result.ok(profile.toEntity(email: user.email));
     } on Failure catch (failure) {
       return Result.error(failure);
-    } catch (error) {
+    } on Object catch (error) {
       return Result.error(GenericFailure(error));
     }
   }

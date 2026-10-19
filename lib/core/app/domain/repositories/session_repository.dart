@@ -1,4 +1,4 @@
-import '../entities/session.dart';
+import 'package:flutter_auth_template/core/app/domain/entities/session.dart';
 
 /// The current session, kept in memory and in secure storage.
 abstract interface class SessionRepository {

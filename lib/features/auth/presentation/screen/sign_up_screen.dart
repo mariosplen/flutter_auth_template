@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/features/auth/domain/validators/credential_validators.dart';
+import 'package:flutter_auth_template/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/l10n/build_context_extensions.dart';
-import '../../domain/validators/credential_validators.dart';
-import '../cubit/auth_cubit.dart';
 
 class const SignUpScreen({super.key}) extends StatefulWidget {
   @override
@@ -26,8 +25,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = context.select(
-      (AuthCubit cubit) => cubit.state.isLoading,
+    final isLoading = context.select<AuthCubit, bool>(
+      (cubit) => cubit.state.isLoading,
     );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.createAccount)),
@@ -83,9 +82,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               email.isEmpty ||
                               password.isEmpty
                           ? null
-                          : () {
+                          : () async {
                               if (_formKey.currentState!.validate()) {
-                                context.read<AuthCubit>().signUp(
+                                await context.read<AuthCubit>().signUp(
                                   email: email,
                                   password: password,
                                   name: name,

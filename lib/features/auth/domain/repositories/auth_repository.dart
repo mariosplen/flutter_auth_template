@@ -1,6 +1,6 @@
 import 'package:flutter_auth_template/core/error/result.dart';
 
-import '../entities/sign_up_result.dart';
+import 'package:flutter_auth_template/features/auth/domain/entities/sign_up_result.dart';
 
 abstract interface class AuthRepository {
   Future<Result<void>> signIn({

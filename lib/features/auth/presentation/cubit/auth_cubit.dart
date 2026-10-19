@@ -1,11 +1,10 @@
 import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
+import 'package:flutter_auth_template/features/auth/domain/usecases/sign_in_use_case.dart';
+import 'package:flutter_auth_template/features/auth/domain/usecases/sign_out_use_case.dart';
+import 'package:flutter_auth_template/features/auth/domain/usecases/sign_up_use_case.dart';
+import 'package:flutter_auth_template/features/auth/presentation/cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../domain/usecases/sign_in_use_case.dart';
-import '../../domain/usecases/sign_out_use_case.dart';
-import '../../domain/usecases/sign_up_use_case.dart';
-import 'auth_state.dart';
 
 class AuthCubit({
   required final SignInUseCase _signIn,

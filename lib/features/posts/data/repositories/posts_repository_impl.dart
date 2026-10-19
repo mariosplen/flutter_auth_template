@@ -1,10 +1,9 @@
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
-
-import '../../domain/entities/post.dart';
-import '../../domain/repositories/posts_repository.dart';
-import '../datasources/posts_remote_data_source.dart';
-import '../mappers/post_mapper.dart';
+import 'package:flutter_auth_template/features/posts/data/datasources/posts_remote_data_source.dart';
+import 'package:flutter_auth_template/features/posts/data/mappers/post_mapper.dart';
+import 'package:flutter_auth_template/features/posts/domain/entities/post.dart';
+import 'package:flutter_auth_template/features/posts/domain/repositories/posts_repository.dart';
 
 class PostsRepositoryImpl(final PostsRemoteDataSource _remoteDataSource)
     implements PostsRepository {
@@ -15,7 +14,7 @@ class PostsRepositoryImpl(final PostsRemoteDataSource _remoteDataSource)
       return Result.ok([for (final post in posts) post.toEntity()]);
     } on Failure catch (failure) {
       return Result.error(failure);
-    } catch (error) {
+    } on Object catch (error) {
       return Result.error(GenericFailure(error));
     }
   }
@@ -33,7 +32,7 @@ class PostsRepositoryImpl(final PostsRemoteDataSource _remoteDataSource)
       return Result.ok(post.toEntity());
     } on Failure catch (failure) {
       return Result.error(failure);
-    } catch (error) {
+    } on Object catch (error) {
       return Result.error(GenericFailure(error));
     }
   }

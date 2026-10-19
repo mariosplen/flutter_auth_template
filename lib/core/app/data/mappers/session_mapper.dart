@@ -1,5 +1,5 @@
-import '../../domain/entities/session.dart';
-import '../models/session_model.dart';
+import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
+import 'package:flutter_auth_template/core/app/domain/entities/session.dart';
 
 extension SessionModelMapper on SessionModel {
   Session toEntity() =>

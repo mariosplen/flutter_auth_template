@@ -9,6 +9,6 @@ class PostResponseModel({
   required final String content,
   required final DateTime createdAt,
 }) {
-  factory PostResponseModel.fromJson(Map<String, dynamic> json) =>
+  factory fromJson(Map<String, dynamic> json) =>
       _$PostResponseModelFromJson(json);
 }

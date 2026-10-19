@@ -7,6 +7,6 @@ class UserResponseModel({
   required final String id,
   required final String email,
 }) {
-  factory UserResponseModel.fromJson(Map<String, dynamic> json) =>
+  factory fromJson(Map<String, dynamic> json) =>
       _$UserResponseModelFromJson(json);
 }

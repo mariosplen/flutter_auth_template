@@ -1,7 +1,7 @@
-import '../../../core/error/failure_message.dart';
-import '../../../core/error/failures.dart';
-import '../../../core/l10n/app_localizations.dart';
-import '../domain/failures/auth_failure.dart';
+import 'package:flutter_auth_template/core/error/failure_message.dart';
+import 'package:flutter_auth_template/core/error/failures.dart';
+import 'package:flutter_auth_template/core/l10n/app_localizations.dart';
+import 'package:flutter_auth_template/features/auth/domain/failures/auth_failure.dart';
 
 extension AuthFailureMessage on Failure {
   String authMessage(AppLocalizations l10n) => switch (this) {

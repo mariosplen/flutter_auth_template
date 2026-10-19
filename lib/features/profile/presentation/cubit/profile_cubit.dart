@@ -1,9 +1,8 @@
 import 'package:flutter_auth_template/core/error/async_value.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
+import 'package:flutter_auth_template/features/profile/domain/usecases/get_profile_use_case.dart';
+import 'package:flutter_auth_template/features/profile/presentation/cubit/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../domain/usecases/get_profile_use_case.dart';
-import 'profile_state.dart';
 
 class ProfileCubit({required final GetProfileUseCase _getProfile})
     extends Cubit<ProfileState> {
