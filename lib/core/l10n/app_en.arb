@@ -25,6 +25,7 @@
   "errorOverRequestRateLimit": "Too many requests. Wait a moment and try again.",
   "errorOverEmailSendRateLimit": "Too many emails sent. Wait a few minutes before trying again.",
   "errorUnexpected": "Something went wrong. Please try again.",
+  "errorNetwork": "Can't reach the server. Check your internet connection and try again.",
   "tryAgain": "Try again",
   "postsTab": "Posts",
   "noPosts": "No posts yet",

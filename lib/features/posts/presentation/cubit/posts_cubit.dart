@@ -15,10 +15,12 @@ class PostsCubit({
     if (state.posts case AsyncLoading()) return;
     emit(state.copyWith(posts: const AsyncLoading()));
     final result = await _getPosts();
+    // closed by a sign out during the request
+    if (isClosed) return;
     switch (result) {
       case Ok(:final value):
         emit(state.copyWith(posts: AsyncData(value)));
-      case Error(:final failure):
+      case Err(:final failure):
         emit(state.copyWith(posts: AsyncError(failure)));
     }
   }
@@ -29,6 +31,8 @@ class PostsCubit({
     if (state.posts case AsyncData(value: final current)) {
       emit(state.copyWith(createPost: const AsyncLoading()));
       final result = await _createPost(title: title, content: content);
+      // closed by a sign out during the request
+      if (isClosed) return;
       switch (result) {
         case Ok(value: final post):
           emit(
@@ -37,7 +41,7 @@ class PostsCubit({
               posts: AsyncData([post, ...current]),
             ),
           );
-        case Error(:final failure):
+        case Err(:final failure):
           emit(state.copyWith(createPost: AsyncError(failure)));
       }
     }

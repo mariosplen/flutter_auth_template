@@ -33,17 +33,14 @@ import 'package:get_it/get_it.dart';
 final GetIt sl = GetIt.instance;
 
 Future<void> init() async {
-  // Singleton cubits.
   sl.registerLazySingleton(() => AppCubit(isSignedIn: sl()));
   sl.registerLazySingleton(
     () => AuthCubit(signIn: sl(), signUp: sl(), signOut: sl()),
   );
 
-  // Factory cubits (can be recreated).
   sl.registerFactory(() => PostsCubit(getPosts: sl(), createPost: sl()));
   sl.registerFactory(() => ProfileCubit(getProfile: sl()));
 
-  // Use cases.
   sl.registerLazySingleton(() => GetIsSignedInUseCase(sl()));
   sl.registerLazySingleton(() => SignInUseCase(sl()));
   sl.registerLazySingleton(() => SignUpUseCase(sl()));
@@ -52,30 +49,26 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreatePostUseCase(sl()));
   sl.registerLazySingleton(() => GetProfileUseCase(sl()));
 
-  // Repositories.
   sl.registerLazySingleton<SessionRepository>(
     () => SessionRepositoryImpl(sl()),
   );
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remoteDataSource: sl(), sessionRepository: sl()),
+    () => AuthRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
   );
   sl.registerLazySingleton<PostsRepository>(() => PostsRepositoryImpl(sl()));
   sl.registerLazySingleton<ProfileRepository>(
     () => ProfileRepositoryImpl(sl()),
   );
 
-  // Data sources.
   sl.registerLazySingleton(() => SessionLocalDataSource(sl()));
   sl.registerLazySingleton(() => AuthRemoteDataSource(sl()));
   sl.registerLazySingleton(() => PostsRemoteDataSource(sl()));
   sl.registerLazySingleton(() => ProfileRemoteDataSource(sl()));
 
-  // APIs.
   sl.registerLazySingleton(() => AuthApi(sl()));
   sl.registerLazySingleton(() => PostsApi(sl()));
   sl.registerLazySingleton(() => ProfileApi(sl()));
 
-  // External dependencies.
   sl.registerLazySingleton(createDio);
   sl.registerLazySingleton(() => const FlutterSecureStorage());
 

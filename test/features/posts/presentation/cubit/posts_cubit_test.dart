@@ -83,6 +83,29 @@ void main() {
         const PostsState(posts: AsyncError(tFailure)),
       ],
     );
+
+    blocTest<PostsCubit, PostsState>(
+      '''
+      GIVEN there are posts on the server
+      WHEN the posts are loaded
+      AND the user signs out before the server answers, which closes the
+          cubit
+      THEN the posts are loading
+      AND nothing else is emitted, because the cubit is closed''',
+      // given
+      setUp: () =>
+          when(() => mockGetPosts())
+              .thenAnswer((_) async => Result.ok([tOlderPost])),
+      build: buildCubit,
+      // when
+      act: (cubit) async {
+        final loading = cubit.load();
+        await cubit.close();
+        await loading;
+      },
+      // then
+      expect: () => [const PostsState(posts: AsyncLoading())],
+    );
   });
 
   group('create', () {
@@ -171,6 +194,33 @@ void main() {
       // then
       expect: () => <PostsState>[],
       verify: (_) => verifyZeroInteractions(mockCreatePost),
+    );
+
+    blocTest<PostsCubit, PostsState>(
+      '''
+      GIVEN the posts are loaded
+      WHEN the user creates a post
+      AND the user signs out before the server answers, which closes the
+          cubit
+      THEN creating the post is loading
+      AND nothing else is emitted, because the cubit is closed''',
+      // given
+      setUp: () => setUpMockCreatePost(Result.ok(tNewPost)),
+      build: buildCubit,
+      seed: () => PostsState(posts: AsyncData([tOlderPost])),
+      // when
+      act: (cubit) async {
+        final creating = create(cubit);
+        await cubit.close();
+        await creating;
+      },
+      // then
+      expect: () => [
+        PostsState(
+          posts: AsyncData([tOlderPost]),
+          createPost: const AsyncLoading(),
+        ),
+      ],
     );
   });
 }

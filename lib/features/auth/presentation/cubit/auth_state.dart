@@ -15,5 +15,5 @@ class const AuthState({
   bool get isLoading => signIn is AsyncLoading || signUp is AsyncLoading;
 
   @override
-  List<Object?> get props => [signIn, signUp, signOut, isLoading];
+  List<Object?> get props => [signIn, signUp, signOut];
 }

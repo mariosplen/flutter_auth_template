@@ -60,7 +60,7 @@ void main() {
       '''
       GIVEN the device is offline
       WHEN the posts are fetched
-      THEN an Error result with the server failure from the remote data source
+      THEN an Err result with the server failure from the remote data source
            is returned''',
       () async {
         // given
@@ -70,11 +70,7 @@ void main() {
         // then
         expect(
           result,
-          isA<Error<List<Post>>>().having(
-            (e) => e.failure,
-            'failure',
-            tFailure,
-          ),
+          isA<Err<List<Post>>>().having((e) => e.failure, 'failure', tFailure),
         );
       },
     );
@@ -83,7 +79,7 @@ void main() {
       '''
       GIVEN the posts table has a shape the app does not expect
       WHEN the posts are fetched
-      THEN an Error result with a generic failure is returned
+      THEN an Err result with a generic failure is returned
       AND the generic failure has the parsing error as its cause''',
       () async {
         // given
@@ -94,7 +90,7 @@ void main() {
         // then
         expect(
           result,
-          isA<Error<List<Post>>>().having(
+          isA<Err<List<Post>>>().having(
             (e) => e.failure,
             'failure',
             const GenericFailure(tError),
@@ -147,7 +143,7 @@ void main() {
       '''
       GIVEN the device is offline
       WHEN a post is created
-      THEN an Error result with the server failure from the remote data source
+      THEN an Err result with the server failure from the remote data source
            is returned''',
       () async {
         // given
@@ -160,7 +156,7 @@ void main() {
         // then
         expect(
           result,
-          isA<Error<Post>>().having((e) => e.failure, 'failure', tFailure),
+          isA<Err<Post>>().having((e) => e.failure, 'failure', tFailure),
         );
       },
     );
@@ -169,7 +165,7 @@ void main() {
       '''
       GIVEN the posts table has a shape the app does not expect
       WHEN a post is created
-      THEN an Error result with a generic failure is returned''',
+      THEN an Err result with a generic failure is returned''',
       () async {
         // given
         const tError = FormatException('unexpected post');
@@ -182,7 +178,7 @@ void main() {
         // then
         expect(
           result,
-          isA<Error<Post>>().having(
+          isA<Err<Post>>().having(
             (e) => e.failure,
             'failure',
             const GenericFailure(tError),

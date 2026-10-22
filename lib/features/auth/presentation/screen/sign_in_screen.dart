@@ -22,6 +22,18 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  bool get _isFilled =>
+      _email.text.trim().isNotEmpty && _password.text.isNotEmpty;
+
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate()) {
+      await context.read<AuthCubit>().signIn(
+        email: _email.text.trim(),
+        password: _password.text,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = context.select<AuthCubit, bool>(
@@ -35,49 +47,56 @@ class _SignInScreenState extends State<SignInScreen> {
           Form(
             key: _formKey,
             autovalidateMode: .onUnfocus,
-            child: Column(
-              crossAxisAlignment: .stretch,
-              children: [
-                TextFormField(
-                  controller: _email,
-                  keyboardType: .emailAddress,
-                  autovalidateMode: .onUserInteractionIfError,
-                  decoration: InputDecoration(labelText: context.l10n.email),
-                  validator: (value) {
-                    final email = value!.trim();
-                    return email.isEmpty || isValidEmail(email)
-                        ? null
-                        : context.l10n.errorInvalidEmail;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _password,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: context.l10n.password),
-                ),
-                const SizedBox(height: 24),
-                ListenableBuilder(
-                  listenable: Listenable.merge([_email, _password]),
-                  builder: (context, _) {
-                    final email = _email.text.trim();
-                    final password = _password.text;
-                    return FilledButton(
-                      onPressed: isLoading || email.isEmpty || password.isEmpty
+            // lets password managers fill in and save the credentials
+            child: AutofillGroup(
+              child: Column(
+                crossAxisAlignment: .stretch,
+                children: [
+                  TextFormField(
+                    controller: _email,
+                    keyboardType: .emailAddress,
+                    textInputAction: .next,
+                    autofillHints: const [AutofillHints.email],
+                    autovalidateMode: .onUserInteractionIfError,
+                    decoration: InputDecoration(labelText: context.l10n.email),
+                    validator: (value) {
+                      final email = value!.trim();
+                      return email.isEmpty || isValidEmail(email)
                           ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                await context.read<AuthCubit>().signIn(
-                                  email: email,
-                                  password: password,
-                                );
-                              }
-                            },
-                      child: Text(context.l10n.signIn),
-                    );
-                  },
-                ),
-              ],
+                          : context.l10n.errorInvalidEmail;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    textInputAction: .done,
+                    autofillHints: const [AutofillHints.password],
+                    decoration: InputDecoration(
+                      labelText: context.l10n.password,
+                    ),
+                    onSubmitted: (_) async {
+                      if (_isFilled) await _signIn();
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  ListenableBuilder(
+                    listenable: Listenable.merge([_email, _password]),
+                    builder: (context, _) => FilledButton(
+                      onPressed: isLoading || !_isFilled ? null : _signIn,
+                      child: isLoading
+                          ? SizedBox.square(
+                              dimension: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                semanticsLabel: context.l10n.signIn,
+                              ),
+                            )
+                          : Text(context.l10n.signIn),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 8),

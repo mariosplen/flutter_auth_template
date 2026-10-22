@@ -29,7 +29,6 @@ abstract class AuthApi {
     @Field('refresh_token') String refreshToken,
   );
 
-  // The scope=global option logs out from all devices.
   @POST('/auth/v1/logout?scope=local')
   Future<void> signOut();
 }

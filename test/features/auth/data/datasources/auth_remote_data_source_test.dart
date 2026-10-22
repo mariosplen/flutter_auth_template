@@ -27,10 +27,15 @@ void main() {
     refreshToken: 'test-refresh-token',
   );
 
-  DioException buildDioException({int? statusCode, Object? data}) {
+  DioException buildDioException({
+    int? statusCode,
+    Object? data,
+    DioExceptionType type = .unknown,
+  }) {
     final requestOptions = RequestOptions(path: '/auth/v1/token');
     return DioException(
       requestOptions: requestOptions,
+      type: type,
       response: statusCode == null
           ? null
           : Response<dynamic>(
@@ -174,15 +179,15 @@ void main() {
       '''
       GIVEN the device is offline
       WHEN the user signs in
-      THEN the connection error is thrown as a server failure''',
+      THEN the connection error is thrown as a network failure''',
       () async {
         // given
-        final tError = buildDioException();
+        final tError = buildDioException(type: .connectionError);
         setUpMockAuthApiSignInError(tError);
         // when
         final result = dataSource.signIn(email: tEmail, password: tPassword);
         // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
+        await expectLater(result, throwsA(NetworkFailure(tError)));
       },
     );
   });

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
+import 'package:flutter_auth_template/core/network/dio_exception_mapper.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
 import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:flutter_auth_template/features/auth/domain/failures/auth_failure.dart';
@@ -33,13 +34,13 @@ class AuthRemoteDataSource(final AuthApi _authApi) {
     try {
       await _authApi.signOut();
     } on DioException catch (error) {
-      throw ServerFailure(error);
+      throw error.toFailure();
     }
   }
 
   Failure _toFailure(DioException error) {
     final type = _failureType(error.response?.data);
-    return type == null ? ServerFailure(error) : AuthFailure(type, error);
+    return type == null ? error.toFailure() : AuthFailure(type, error);
   }
 
   AuthFailureType? _failureType(Object? data) => switch (data) {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_auth_template/core/error/failure_message.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/l10n/build_context_extensions.dart';
+import 'package:flutter_auth_template/core/l10n/failure_message.dart';
 
 class const FailureView({
   required final Failure failure,

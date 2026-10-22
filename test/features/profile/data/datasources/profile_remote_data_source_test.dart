@@ -19,7 +19,14 @@ void main() {
   });
 
   const tUserId = '5f1c2a34-9d1e-4b7a-8c55-0a1b2c3d4e5f';
-  final tError = DioException(requestOptions: RequestOptions(path: '/'));
+  final tConnectionError = DioException(
+    requestOptions: RequestOptions(path: '/auth/v1/user'),
+    type: .connectionError,
+  );
+  final tServerError = DioException(
+    requestOptions: RequestOptions(path: '/rest/v1/profiles'),
+    type: .badResponse,
+  );
 
   group('getUser', () {
     test(
@@ -48,15 +55,15 @@ void main() {
       '''
       GIVEN the device is offline
       WHEN the user is fetched
-      THEN the connection error from the API is thrown as a server failure
+      THEN the connection error from the API is thrown as a network failure
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockProfileApi.getUser()).thenThrow(tError);
+        when(() => mockProfileApi.getUser()).thenThrow(tConnectionError);
         // when
         final result = dataSource.getUser();
         // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
+        await expectLater(result, throwsA(NetworkFailure(tConnectionError)));
       },
     );
   });
@@ -95,11 +102,11 @@ void main() {
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockProfileApi.getProfile(any())).thenThrow(tError);
+        when(() => mockProfileApi.getProfile(any())).thenThrow(tServerError);
         // when
         final result = dataSource.getProfile(tUserId);
         // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
+        await expectLater(result, throwsA(ServerFailure(tServerError)));
       },
     );
   });

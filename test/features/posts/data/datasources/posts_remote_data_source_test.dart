@@ -25,8 +25,13 @@ void main() {
     content: tContent,
     createdAt: DateTime.utc(2026, 1, 2, 12, 30),
   );
-  final tError = DioException(
+  final tConnectionError = DioException(
     requestOptions: RequestOptions(path: '/rest/v1/posts'),
+    type: .connectionError,
+  );
+  final tServerError = DioException(
+    requestOptions: RequestOptions(path: '/rest/v1/posts'),
+    type: .badResponse,
   );
 
   group('getPosts', () {
@@ -52,15 +57,15 @@ void main() {
       '''
       GIVEN the device is offline
       WHEN the posts are fetched
-      THEN the connection error from the API is thrown as a server failure
+      THEN the connection error from the API is thrown as a network failure
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockPostsApi.getPosts()).thenThrow(tError);
+        when(() => mockPostsApi.getPosts()).thenThrow(tConnectionError);
         // when
         final result = dataSource.getPosts();
         // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
+        await expectLater(result, throwsA(NetworkFailure(tConnectionError)));
       },
     );
   });
@@ -96,11 +101,12 @@ void main() {
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockPostsApi.createPost(any(), any())).thenThrow(tError);
+        when(() => mockPostsApi.createPost(any(), any()))
+            .thenThrow(tServerError);
         // when
         final result = dataSource.createPost(title: tTitle, content: tContent);
         // then
-        await expectLater(result, throwsA(ServerFailure(tError)));
+        await expectLater(result, throwsA(ServerFailure(tServerError)));
       },
     );
   });

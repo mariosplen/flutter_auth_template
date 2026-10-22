@@ -20,7 +20,7 @@ class AuthCubit({
     switch (result) {
       case Ok():
         emit(state.copyWith(signIn: const AsyncData(null)));
-      case Error(:final failure):
+      case Err(:final failure):
         emit(state.copyWith(signIn: AsyncError(failure)));
     }
   }
@@ -36,7 +36,7 @@ class AuthCubit({
     switch (result) {
       case Ok(:final value):
         emit(state.copyWith(signUp: AsyncData(value)));
-      case Error(:final failure):
+      case Err(:final failure):
         emit(state.copyWith(signUp: AsyncError(failure)));
     }
   }

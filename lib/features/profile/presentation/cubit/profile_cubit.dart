@@ -12,10 +12,12 @@ class ProfileCubit({required final GetProfileUseCase _getProfile})
     if (state.profile case AsyncLoading()) return;
     emit(state.copyWith(profile: const AsyncLoading()));
     final result = await _getProfile();
+    // closed by a sign out during the request
+    if (isClosed) return;
     switch (result) {
       case Ok(:final value):
         emit(state.copyWith(profile: AsyncData(value)));
-      case Error(:final failure):
+      case Err(:final failure):
         emit(state.copyWith(profile: AsyncError(failure)));
     }
   }

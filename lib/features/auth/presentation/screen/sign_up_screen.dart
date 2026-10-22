@@ -23,6 +23,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  bool get _isFilled =>
+      _name.text.trim().isNotEmpty &&
+      _email.text.trim().isNotEmpty &&
+      _password.text.isNotEmpty;
+
+  Future<void> _signUp() async {
+    if (_formKey.currentState!.validate()) {
+      await context.read<AuthCubit>().signUp(
+        email: _email.text.trim(),
+        password: _password.text,
+        name: _name.text.trim(),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLoading = context.select<AuthCubit, bool>(
@@ -36,66 +51,69 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Form(
             key: _formKey,
             autovalidateMode: .onUnfocus,
-            child: Column(
-              crossAxisAlignment: .stretch,
-              children: [
-                TextField(
-                  controller: _name,
-                  textCapitalization: .words,
-                  decoration: InputDecoration(labelText: context.l10n.name),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _email,
-                  keyboardType: .emailAddress,
-                  autovalidateMode: .onUserInteractionIfError,
-                  decoration: InputDecoration(labelText: context.l10n.email),
-                  validator: (value) {
-                    final email = value!.trim();
-                    return email.isEmpty || isValidEmail(email)
-                        ? null
-                        : context.l10n.errorInvalidEmail;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _password,
-                  obscureText: true,
-                  autovalidateMode: .onUserInteractionIfError,
-                  decoration: InputDecoration(labelText: context.l10n.password),
-                  validator: (password) =>
-                      password!.isEmpty || isLongEnoughPassword(password)
-                      ? null
-                      : context.l10n.errorPasswordTooShort(minPasswordLength),
-                ),
-                const SizedBox(height: 24),
-                ListenableBuilder(
-                  listenable: Listenable.merge([_name, _email, _password]),
-                  builder: (context, _) {
-                    final name = _name.text.trim();
-                    final email = _email.text.trim();
-                    final password = _password.text;
-                    return FilledButton(
-                      onPressed:
-                          isLoading ||
-                              name.isEmpty ||
-                              email.isEmpty ||
-                              password.isEmpty
+            // lets password managers fill in and save the new credentials
+            child: AutofillGroup(
+              child: Column(
+                crossAxisAlignment: .stretch,
+                children: [
+                  TextField(
+                    controller: _name,
+                    textCapitalization: .words,
+                    textInputAction: .next,
+                    autofillHints: const [AutofillHints.name],
+                    decoration: InputDecoration(labelText: context.l10n.name),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _email,
+                    keyboardType: .emailAddress,
+                    textInputAction: .next,
+                    autofillHints: const [AutofillHints.email],
+                    autovalidateMode: .onUserInteractionIfError,
+                    decoration: InputDecoration(labelText: context.l10n.email),
+                    validator: (value) {
+                      final email = value!.trim();
+                      return email.isEmpty || isValidEmail(email)
                           ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                await context.read<AuthCubit>().signUp(
-                                  email: email,
-                                  password: password,
-                                  name: name,
-                                );
-                              }
-                            },
-                      child: Text(context.l10n.createAccount),
-                    );
-                  },
-                ),
-              ],
+                          : context.l10n.errorInvalidEmail;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _password,
+                    obscureText: true,
+                    textInputAction: .done,
+                    autofillHints: const [AutofillHints.newPassword],
+                    autovalidateMode: .onUserInteractionIfError,
+                    decoration: InputDecoration(
+                      labelText: context.l10n.password,
+                    ),
+                    validator: (password) =>
+                        password!.isEmpty || isLongEnoughPassword(password)
+                        ? null
+                        : context.l10n.errorPasswordTooShort(minPasswordLength),
+                    onFieldSubmitted: (_) async {
+                      if (_isFilled) await _signUp();
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  ListenableBuilder(
+                    listenable: Listenable.merge([_name, _email, _password]),
+                    builder: (context, _) => FilledButton(
+                      onPressed: isLoading || !_isFilled ? null : _signUp,
+                      child: isLoading
+                          ? SizedBox.square(
+                              dimension: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                semanticsLabel: context.l10n.createAccount,
+                              ),
+                            )
+                          : Text(context.l10n.createAccount),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

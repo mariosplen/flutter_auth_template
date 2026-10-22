@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/error/failures.dart';
+import 'package:flutter_auth_template/core/network/dio_exception_mapper.dart';
 import 'package:flutter_auth_template/features/posts/data/datasources/posts_api.dart';
 import 'package:flutter_auth_template/features/posts/data/models/post_response_model.dart';
 
@@ -8,7 +8,7 @@ class PostsRemoteDataSource(final PostsApi _postsApi) {
     try {
       return await _postsApi.getPosts();
     } on DioException catch (error) {
-      throw ServerFailure(error);
+      throw error.toFailure();
     }
   }
 
@@ -19,7 +19,7 @@ class PostsRemoteDataSource(final PostsApi _postsApi) {
     try {
       return await _postsApi.createPost(title, content);
     } on DioException catch (error) {
-      throw ServerFailure(error);
+      throw error.toFailure();
     }
   }
 }

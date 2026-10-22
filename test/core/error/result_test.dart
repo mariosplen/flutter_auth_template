@@ -29,7 +29,7 @@ void main() {
       '''
       GIVEN a repository call that failed with a server failure
       WHEN its result is created with Result.error
-      THEN the result is an Error
+      THEN the result is an Err
       AND it carries the server failure''',
       () {
         // given
@@ -39,11 +39,7 @@ void main() {
         // then
         expect(
           result,
-          isA<Error<int>>().having(
-            (error) => error.failure,
-            'failure',
-            tFailure,
-          ),
+          isA<Err<int>>().having((error) => error.failure, 'failure', tFailure),
         );
       },
     );

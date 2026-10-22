@@ -618,6 +618,7 @@ void main() {
         AND the app has refreshed too often, so refreshes are rate limited
         WHEN the error passes through the interceptor
         THEN the session is kept, so the user stays signed in
+        AND the app is not told that the session expired
         AND the 429 Too Many Requests error of the refresh is passed on''',
         () async {
           // given

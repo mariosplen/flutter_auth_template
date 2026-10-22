@@ -1,5 +1,4 @@
-import 'package:flutter_auth_template/core/app/data/mappers/session_mapper.dart';
-import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
+import 'package:flutter_auth_template/core/app/data/datasources/session_local_data_source.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_auth_template/features/auth/domain/repositories/auth_rep
 
 class AuthRepositoryImpl({
   required final AuthRemoteDataSource _remoteDataSource,
-  required final SessionRepository _sessionRepository,
+  required final SessionLocalDataSource _localDataSource,
 }) implements AuthRepository {
   @override
   Future<Result<void>> signIn({
@@ -21,7 +20,7 @@ class AuthRepositoryImpl({
         email: email,
         password: password,
       );
-      await _sessionRepository.save(session.toEntity());
+      await _localDataSource.save(session);
       return const Result.ok(null);
     } on Failure catch (failure) {
       return Result.error(failure);
@@ -44,7 +43,7 @@ class AuthRepositoryImpl({
       );
       switch (response) {
         case SignedUpWithSession(:final session):
-          await _sessionRepository.save(session.toEntity());
+          await _localDataSource.save(session);
           return const Result.ok(SignedUp());
         case SignUpNeedsConfirmation():
           return const Result.ok(ConfirmationRequired());
@@ -64,7 +63,7 @@ class AuthRepositoryImpl({
       // Sign out locally regardless.
     }
     try {
-      await _sessionRepository.clear();
+      await _localDataSource.clear();
     } on Object {
       // Already signed out in memory.
     }
