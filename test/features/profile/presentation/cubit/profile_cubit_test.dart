@@ -69,5 +69,28 @@ void main() {
         const ProfileState(profile: AsyncError(tFailure)),
       ],
     );
+
+    blocTest<ProfileCubit, ProfileState>(
+      '''
+      GIVEN a signed in user with a profile
+      WHEN the profile is loaded
+      AND the user signs out before the server answers, which closes the
+          cubit
+      THEN the profile is loading
+      AND nothing else is emitted, because the cubit is closed''',
+      // given
+      setUp: () =>
+          when(() => mockGetProfile())
+              .thenAnswer((_) async => Result.ok(tProfile)),
+      build: buildCubit,
+      // when
+      act: (cubit) async {
+        final loading = cubit.load();
+        await cubit.close();
+        await loading;
+      },
+      // then
+      expect: () => [const ProfileState(profile: AsyncLoading())],
+    );
   });
 }

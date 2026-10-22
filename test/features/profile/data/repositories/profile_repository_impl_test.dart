@@ -74,7 +74,7 @@ void main() {
       WHEN the profile is fetched
       THEN the profile itself is never fetched, because fetching the user
            already failed
-      AND an Error result with the server failure from fetching the user is
+      AND an Err result with the server failure from fetching the user is
           returned''',
       () async {
         // given
@@ -85,7 +85,7 @@ void main() {
         verifyNever(() => mockRemoteDataSource.getProfile(any()));
         expect(
           result,
-          isA<Error<Profile>>().having((e) => e.failure, 'failure', tFailure),
+          isA<Err<Profile>>().having((e) => e.failure, 'failure', tFailure),
         );
       },
     );
@@ -94,7 +94,7 @@ void main() {
       '''
       GIVEN Supabase Auth's user response has a shape the app does not expect
       WHEN the profile is fetched
-      THEN an Error result with a generic failure is returned
+      THEN an Err result with a generic failure is returned
       AND the generic failure has the parsing error as its cause''',
       () async {
         // given
@@ -105,7 +105,7 @@ void main() {
         // then
         expect(
           result,
-          isA<Error<Profile>>().having(
+          isA<Err<Profile>>().having(
             (e) => e.failure,
             'failure',
             const GenericFailure(tError),
