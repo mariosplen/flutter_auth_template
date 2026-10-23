@@ -141,6 +141,29 @@ void main() {
         expect(dataSource.session, same(tSessionModel));
       },
     );
+
+    test(
+      '''
+      GIVEN a session that the user just got by signing in
+      AND secure storage cannot be written
+      WHEN the session is saved
+      THEN saving completes without throwing
+      AND the session is kept in memory, so the user stays signed in until
+          the app closes''',
+      () async {
+        // given
+        when(
+          () => mockFlutterSecureStorage.write(
+            key: any(named: 'key'),
+            value: any(named: 'value'),
+          ),
+        ).thenAnswer((_) async => throw PlatformException(code: 'unavailable'));
+        // when
+        await dataSource.save(tSessionModel);
+        // then
+        expect(dataSource.session, same(tSessionModel));
+      },
+    );
   });
 
   group('clear', () {

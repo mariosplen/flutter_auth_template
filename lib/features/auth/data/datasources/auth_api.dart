@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
+import 'package:flutter_auth_template/features/auth/data/models/session_response_model.dart';
 import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -21,11 +21,14 @@ abstract class AuthApi {
 
   @POST('/auth/v1/token?grant_type=password')
   @Extra({requiresAuthKey: false})
-  Future<SessionModel> signIn(@Field() String email, @Field() String password);
+  Future<SessionResponseModel> signIn(
+    @Field() String email,
+    @Field() String password,
+  );
 
   @POST('/auth/v1/token?grant_type=refresh_token')
   @Extra({requiresAuthKey: false})
-  Future<SessionModel> refreshSession(
+  Future<SessionResponseModel> refreshSession(
     @Field('refresh_token') String refreshToken,
   );
 

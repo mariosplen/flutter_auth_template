@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/network/dio_exception_mapper.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
+import 'package:flutter_auth_template/features/auth/data/models/session_response_model.dart';
 import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:flutter_auth_template/features/auth/domain/failures/auth_failure.dart';
 
 class AuthRemoteDataSource(final AuthApi _authApi) {
-  Future<SessionModel> signIn({
+  Future<SessionResponseModel> signIn({
     required String email,
     required String password,
   }) async {

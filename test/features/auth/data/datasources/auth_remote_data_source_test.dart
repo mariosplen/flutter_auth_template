@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:flutter_auth_template/features/auth/data/models/session_response_model.dart';
 import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:flutter_auth_template/features/auth/domain/failures/auth_failure.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +22,7 @@ void main() {
   const tEmail = 'test@example.com';
   const tPassword = 'secret123';
   const tName = 'Test User';
-  final tSessionModel = SessionModel(
+  final tSessionResponseModel = SessionResponseModel(
     accessToken: 'test-access-token',
     refreshToken: 'test-refresh-token',
   );
@@ -64,14 +64,14 @@ void main() {
       () async {
         // given
         when(() => mockAuthApi.signIn(any(), any()))
-            .thenAnswer((_) async => tSessionModel);
+            .thenAnswer((_) async => tSessionResponseModel);
         // when
         final result = await dataSource.signIn(
           email: tEmail,
           password: tPassword,
         );
         // then
-        expect(result, same(tSessionModel));
+        expect(result, same(tSessionResponseModel));
         verify(() => mockAuthApi.signIn(tEmail, tPassword));
         verifyNoMoreInteractions(mockAuthApi);
       },

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_api.dart';
+import 'package:flutter_auth_template/features/auth/data/models/session_response_model.dart';
 import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -99,7 +99,7 @@ void main() {
       THEN a POST request is sent to /auth/v1/token with the password grant
       AND its body has the email and the password
       AND the request is marked as not requiring authentication
-      AND the session in the response is parsed into a session model''',
+      AND the session in the response is parsed into a session response model''',
       () async {
         // given
         setUpMockHttpClientAdapterSuccess200(fixture('session.json'));
@@ -116,7 +116,7 @@ void main() {
         expect(request.extra[requiresAuthKey], isFalse);
         expect(
           result,
-          isA<SessionModel>()
+          isA<SessionResponseModel>()
               .having((s) => s.accessToken, 'accessToken', 'test-access-token')
               .having((s) => s.refreshToken, 'refreshToken', tRefreshToken),
         );
@@ -133,7 +133,7 @@ void main() {
            grant
       AND its body has the refresh token under "refresh_token"
       AND the request is marked as not requiring authentication
-      AND the new session in the response is parsed into a session model''',
+      AND the new session in the response is parsed into a session response model''',
       () async {
         // given
         setUpMockHttpClientAdapterSuccess200(fixture('session.json'));

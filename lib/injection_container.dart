@@ -53,7 +53,7 @@ Future<void> init() async {
     () => SessionRepositoryImpl(sl()),
   );
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
+    () => AuthRepositoryImpl(remoteDataSource: sl(), sessionRepository: sl()),
   );
   sl.registerLazySingleton<PostsRepository>(() => PostsRepositoryImpl(sl()));
   sl.registerLazySingleton<ProfileRepository>(

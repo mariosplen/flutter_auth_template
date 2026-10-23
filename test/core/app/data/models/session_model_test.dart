@@ -12,15 +12,13 @@ void main() {
   group('fromJson', () {
     test(
       '''
-      GIVEN the JSON of a Supabase token response, which also has the user,
-            the token type and the expiry
+      GIVEN the JSON of a session that was stored on an earlier launch
       WHEN it is parsed into a session model
-      THEN the session model has the access token and the refresh token
-      AND the other fields are ignored''',
+      THEN the session model has the access token and the refresh token''',
       () {
         // given
         final jsonMap =
-            json.decode(fixture('session.json')) as Map<String, dynamic>;
+            json.decode(fixture('session_cached.json')) as Map<String, dynamic>;
         // when
         final result = SessionModel.fromJson(jsonMap);
         // then

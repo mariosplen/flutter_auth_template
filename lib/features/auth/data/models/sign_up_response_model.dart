@@ -1,15 +1,15 @@
-import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
+import 'package:flutter_auth_template/features/auth/data/models/session_response_model.dart';
 
 sealed class const SignUpResponseModel() {
   factory fromJson(Map<String, dynamic> json) => switch (json) {
     {'access_token': String()} => SignedUpWithSession(
-      SessionModel.fromJson(json),
+      SessionResponseModel.fromJson(json),
     ),
     _ => const SignUpNeedsConfirmation(),
   };
 }
 
-final class const SignedUpWithSession(final SessionModel session)
+final class const SignedUpWithSession(final SessionResponseModel session)
     extends SignUpResponseModel;
 
 final class const SignUpNeedsConfirmation() extends SignUpResponseModel;

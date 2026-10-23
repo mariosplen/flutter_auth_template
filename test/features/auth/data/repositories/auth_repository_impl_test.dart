@@ -1,9 +1,10 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_auth_template/core/app/data/datasources/session_local_data_source.dart';
-import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
+import 'package:flutter_auth_template/core/app/domain/entities/session.dart';
+import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
 import 'package:flutter_auth_template/core/error/failures.dart';
 import 'package:flutter_auth_template/core/error/result.dart';
 import 'package:flutter_auth_template/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:flutter_auth_template/features/auth/data/models/session_response_model.dart';
 import 'package:flutter_auth_template/features/auth/data/models/sign_up_response_model.dart';
 import 'package:flutter_auth_template/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_auth_template/features/auth/domain/entities/sign_up_result.dart';
@@ -13,41 +14,47 @@ import 'package:mocktail/mocktail.dart';
 
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource;
 
-class MockSessionLocalDataSource extends Mock implements SessionLocalDataSource;
+class MockSessionRepository extends Mock implements SessionRepository;
 
 void main() {
   late AuthRepositoryImpl repository;
   late MockAuthRemoteDataSource mockRemoteDataSource;
-  late MockSessionLocalDataSource mockLocalDataSource;
+  late MockSessionRepository mockSessionRepository;
 
   setUpAll(() {
-    registerFallbackValue(SessionModel(accessToken: '', refreshToken: ''));
+    registerFallbackValue(const Session(accessToken: '', refreshToken: ''));
   });
 
   setUp(() {
     mockRemoteDataSource = MockAuthRemoteDataSource();
-    mockLocalDataSource = MockSessionLocalDataSource();
+    mockSessionRepository = MockSessionRepository();
     repository = AuthRepositoryImpl(
       remoteDataSource: mockRemoteDataSource,
-      localDataSource: mockLocalDataSource,
+      sessionRepository: mockSessionRepository,
     );
   });
 
   const tEmail = 'test@example.com';
   const tPassword = 'secret123';
   const tName = 'Test User';
-  final tSessionModel = SessionModel(
+  final tSessionResponseModel = SessionResponseModel(
+    accessToken: 'test-access-token',
+    refreshToken: 'test-refresh-token',
+  );
+  const tSession = Session(
     accessToken: 'test-access-token',
     refreshToken: 'test-refresh-token',
   );
   const tFailure = AuthFailure(AuthFailureType.invalidCredentials, 'cause');
 
-  void setUpMockLocalDataSourceSaveSuccess() {
-    when(() => mockLocalDataSource.save(any())).thenAnswer((_) async {});
+  void setUpMockSessionRepositorySaveSuccess() {
+    when(() => mockSessionRepository.save(any())).thenAnswer((_) async {});
   }
 
   group('signIn', () {
-    void setUpMockRemoteDataSourceSignIn(Future<SessionModel> Function() call) {
+    void setUpMockRemoteDataSourceSignIn(
+      Future<SessionResponseModel> Function() call,
+    ) {
       when(
         () => mockRemoteDataSource.signIn(
           email: any(named: 'email'),
@@ -66,8 +73,8 @@ void main() {
       AND an Ok result is returned''',
       () async {
         // given
-        setUpMockRemoteDataSourceSignIn(() async => tSessionModel);
-        setUpMockLocalDataSourceSaveSuccess();
+        setUpMockRemoteDataSourceSignIn(() async => tSessionResponseModel);
+        setUpMockSessionRepositorySaveSuccess();
         // when
         final result = await repository.signIn(
           email: tEmail,
@@ -77,7 +84,7 @@ void main() {
         verify(
           () => mockRemoteDataSource.signIn(email: tEmail, password: tPassword),
         );
-        verify(() => mockLocalDataSource.save(tSessionModel)).called(1);
+        verify(() => mockSessionRepository.save(tSession)).called(1);
         expect(result, isA<Ok<void>>());
       },
     );
@@ -98,7 +105,7 @@ void main() {
           password: tPassword,
         );
         // then
-        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockSessionRepository);
         expect(
           result,
           isA<Err<void>>().having((e) => e.failure, 'failure', tFailure),
@@ -108,28 +115,28 @@ void main() {
 
     test(
       '''
-      GIVEN an account with this email and password
-      AND secure storage is unavailable
+      GIVEN Supabase Auth's sign in response has a shape the app does not
+            expect
       WHEN the user signs in
-      THEN an Err result with a generic failure is returned''',
+      THEN no session is saved
+      AND an Err result with a generic failure is returned''',
       () async {
         // given
-        final tError = PlatformException(code: 'unavailable');
-        setUpMockRemoteDataSourceSignIn(() async => tSessionModel);
-        when(() => mockLocalDataSource.save(any()))
-            .thenAnswer((_) async => throw tError);
+        const tError = FormatException('unexpected response');
+        setUpMockRemoteDataSourceSignIn(() async => throw tError);
         // when
         final result = await repository.signIn(
           email: tEmail,
           password: tPassword,
         );
         // then
+        verifyZeroInteractions(mockSessionRepository);
         expect(
           result,
           isA<Err<void>>().having(
             (e) => e.failure,
             'failure',
-            GenericFailure(tError),
+            const GenericFailure(tError),
           ),
         );
       },
@@ -163,9 +170,9 @@ void main() {
       () async {
         // given
         setUpMockRemoteDataSourceSignUp(
-          () async => SignedUpWithSession(tSessionModel),
+          () async => SignedUpWithSession(tSessionResponseModel),
         );
-        setUpMockLocalDataSourceSaveSuccess();
+        setUpMockSessionRepositorySaveSuccess();
         // when
         final result = await signUp();
         // then
@@ -176,7 +183,7 @@ void main() {
             name: tName,
           ),
         );
-        verify(() => mockLocalDataSource.save(tSessionModel)).called(1);
+        verify(() => mockSessionRepository.save(tSession)).called(1);
         expect(
           result,
           isA<Ok<SignUpResult>>().having(
@@ -202,7 +209,7 @@ void main() {
         // when
         final result = await signUp();
         // then
-        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockSessionRepository);
         expect(
           result,
           isA<Ok<SignUpResult>>().having(
@@ -226,7 +233,7 @@ void main() {
         // when
         final result = await signUp();
         // then
-        verifyZeroInteractions(mockLocalDataSource);
+        verifyZeroInteractions(mockSessionRepository);
         expect(
           result,
           isA<Err<SignUpResult>>().having(
@@ -273,12 +280,12 @@ void main() {
       () async {
         // given
         when(() => mockRemoteDataSource.signOut()).thenAnswer((_) async {});
-        when(() => mockLocalDataSource.clear()).thenAnswer((_) async {});
+        when(() => mockSessionRepository.clear()).thenAnswer((_) async {});
         // when
         await repository.signOut();
         // then
         verify(() => mockRemoteDataSource.signOut()).called(1);
-        verify(() => mockLocalDataSource.clear()).called(1);
+        verify(() => mockSessionRepository.clear()).called(1);
       },
     );
 
@@ -293,11 +300,11 @@ void main() {
         // given
         when(() => mockRemoteDataSource.signOut())
             .thenAnswer((_) async => throw const ServerFailure('offline'));
-        when(() => mockLocalDataSource.clear()).thenAnswer((_) async {});
+        when(() => mockSessionRepository.clear()).thenAnswer((_) async {});
         // when
         await repository.signOut();
         // then
-        verify(() => mockLocalDataSource.clear()).called(1);
+        verify(() => mockSessionRepository.clear()).called(1);
       },
     );
 
@@ -312,7 +319,7 @@ void main() {
         // given
         when(() => mockRemoteDataSource.signOut()).thenAnswer((_) async {});
         when(
-          () => mockLocalDataSource.clear(),
+          () => mockSessionRepository.clear(),
         ).thenAnswer((_) async => throw PlatformException(code: 'unavailable'));
         // when
         final result = repository.signOut();

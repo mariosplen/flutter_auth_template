@@ -25,7 +25,11 @@ class SessionLocalDataSource(final FlutterSecureStorage _storage) {
 
   Future<void> save(SessionModel session) async {
     _session = session;
-    await _storage.write(key: _key, value: jsonEncode(session.toJson()));
+    try {
+      await _storage.write(key: _key, value: jsonEncode(session.toJson()));
+    } on Object {
+      // Unwritable storage, so the session only lasts until the app closes.
+    }
   }
 
   Future<void> clear() async {
