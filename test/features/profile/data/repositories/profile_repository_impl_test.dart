@@ -78,11 +78,34 @@ void main() {
           returned''',
       () async {
         // given
-        when(() => mockRemoteDataSource.getUser()).thenThrow(tFailure);
+        when(() => mockRemoteDataSource.getUser())
+            .thenAnswer((_) async => throw tFailure);
         // when
         final result = await repository.getProfile();
         // then
         verifyNever(() => mockRemoteDataSource.getProfile(any()));
+        expect(
+          result,
+          isA<Err<Profile>>().having((e) => e.failure, 'failure', tFailure),
+        );
+      },
+    );
+
+    test(
+      '''
+      GIVEN a signed in user
+      AND the user has no profile row
+      WHEN the profile is fetched
+      THEN an Err result with the server failure from fetching the profile is
+           returned''',
+      () async {
+        // given
+        setUpMockRemoteDataSourceGetUserSuccess();
+        when(() => mockRemoteDataSource.getProfile(any()))
+            .thenAnswer((_) async => throw tFailure);
+        // when
+        final result = await repository.getProfile();
+        // then
         expect(
           result,
           isA<Err<Profile>>().having((e) => e.failure, 'failure', tFailure),
@@ -99,7 +122,8 @@ void main() {
       () async {
         // given
         const tError = FormatException('unexpected profile');
-        when(() => mockRemoteDataSource.getUser()).thenThrow(tError);
+        when(() => mockRemoteDataSource.getUser())
+            .thenAnswer((_) async => throw tError);
         // when
         final result = await repository.getProfile();
         // then

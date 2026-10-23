@@ -59,7 +59,8 @@ void main() {
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockProfileApi.getUser()).thenThrow(tConnectionError);
+        when(() => mockProfileApi.getUser())
+            .thenAnswer((_) async => throw tConnectionError);
         // when
         final result = dataSource.getUser();
         // then
@@ -102,7 +103,8 @@ void main() {
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockProfileApi.getProfile(any())).thenThrow(tServerError);
+        when(() => mockProfileApi.getProfile(any()))
+            .thenAnswer((_) async => throw tServerError);
         // when
         final result = dataSource.getProfile(tUserId);
         // then

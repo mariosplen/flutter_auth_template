@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
 import 'package:flutter_auth_template/core/app/domain/entities/session.dart';
 import 'package:flutter_auth_template/core/app/domain/repositories/session_repository.dart';
@@ -270,25 +271,36 @@ void main() {
       test(
         '''
         GIVEN the user is signed in
-        AND a request that was already retried after a refresh failed with
-            a 401 again
-        WHEN the error passes through the interceptor
-        THEN the session is not refreshed a second time
-        AND the request is not retried a second time
-        AND the same error is passed on''',
+        AND the refresh token is still valid
+        AND the server answers the request with a 401 even after a refresh
+        WHEN a request fails with a 401, so the session is refreshed and the
+             request is retried
+        AND the 401 error of the retried request passes through the
+            interceptor too
+        THEN the session is refreshed only once
+        AND the request is retried only once
+        AND the 401 error of the retried request is passed on''',
         () async {
           // given
           currentSession = tSession;
-          final tError = buildDioException(
-            buildRequestOptions(extra: {'retried': true}),
+          final tRequestOptions = buildRequestOptions();
+          final tRetryError = buildDioException(
+            tRequestOptions,
             statusCode: 401,
           );
+          setUpMockAuthApiRefreshSuccess();
+          when(() => mockDio.fetch<dynamic>(any()))
+              .thenAnswer((_) async => throw tRetryError);
           // when
-          await interceptor.onError(tError, mockErrorHandler);
+          await interceptor.onError(
+            buildDioException(tRequestOptions, statusCode: 401),
+            mockErrorHandler,
+          );
+          await interceptor.onError(tRetryError, mockErrorHandler);
           // then
-          verifyZeroInteractions(mockAuthApi);
-          verifyZeroInteractions(mockDio);
-          verify(() => mockErrorHandler.next(tError)).called(1);
+          verify(() => mockAuthApi.refreshSession(any())).called(1);
+          verify(() => mockDio.fetch<dynamic>(any())).called(1);
+          verify(() => mockErrorHandler.next(tRetryError)).called(2);
         },
       );
     });
@@ -302,7 +314,7 @@ void main() {
         WHEN the error passes through the interceptor
         THEN the session is refreshed with the current refresh token
         AND the fresh session is saved
-        AND the request is retried once, marked as retried
+        AND the request is retried once
         AND the response of the retried request is passed on''',
         () async {
           // given
@@ -321,7 +333,6 @@ void main() {
           verify(() => mockSessionRepository.save(tFreshSession)).called(1);
           expect(currentSession, tFreshSession);
           verify(() => mockDio.fetch<dynamic>(tRequestOptions)).called(1);
-          expect(tRequestOptions.extra['retried'], isTrue);
           verify(() => mockErrorHandler.resolve(tRetriedResponse)).called(1);
           verifyNever(() => mockErrorHandler.next(any()));
         },
@@ -427,20 +438,22 @@ void main() {
 
       test(
         '''
-        GIVEN a refresh of the session has already finished
-        AND a later request sent with the fresh access token failed with a 401
-        WHEN the error passes through the interceptor
-        THEN the session is refreshed again with the fresh refresh token''',
+        GIVEN the user is signed in
+        AND the refresh token is still valid
+        WHEN a request fails with a 401, so the session is refreshed
+        AND later a request sent with the fresh access token fails with a 401
+        THEN the session is refreshed a second time, with the fresh refresh
+             token, because the first refresh has already finished''',
         () async {
           // given
           currentSession = tSession;
           setUpMockAuthApiRefreshSuccess();
           setUpMockDioRetrySuccess(buildRetriedResponse(RequestOptions()));
+          // when
           await interceptor.onError(
             buildDioException(buildRequestOptions(), statusCode: 401),
             mockErrorHandler,
           );
-          // when
           await interceptor.onError(
             buildDioException(
               buildRequestOptions(sentWithAccessToken: tFreshAccessToken),
@@ -506,7 +519,8 @@ void main() {
             statusCode: 500,
           );
           setUpMockAuthApiRefreshSuccess();
-          when(() => mockDio.fetch<dynamic>(any())).thenThrow(tRetryError);
+          when(() => mockDio.fetch<dynamic>(any()))
+              .thenAnswer((_) async => throw tRetryError);
           // when
           await interceptor.onError(
             buildDioException(tRequestOptions, statusCode: 401),
@@ -524,6 +538,34 @@ void main() {
         '''
         GIVEN the user is signed in
         AND a request failed with a 401
+        AND the refresh token is still valid
+        AND secure storage is unavailable
+        WHEN the error passes through the interceptor
+        THEN the storage error is thrown, so Dio fails the request with it
+        AND the request is not retried''',
+        () async {
+          // given
+          currentSession = tSession;
+          final tStorageError = PlatformException(code: 'unavailable');
+          setUpMockAuthApiRefreshSuccess();
+          when(() => mockSessionRepository.save(any()))
+              .thenAnswer((_) async => throw tStorageError);
+          // when
+          final result = interceptor.onError(
+            buildDioException(buildRequestOptions(), statusCode: 401),
+            mockErrorHandler,
+          );
+          // then
+          await expectLater(result, throwsA(tStorageError));
+          verifyZeroInteractions(mockDio);
+          verifyZeroInteractions(mockErrorHandler);
+        },
+      );
+
+      test(
+        '''
+        GIVEN the user is signed in
+        AND a request failed with a 401
         AND the refresh token was revoked or has expired
         WHEN the error passes through the interceptor
         THEN the session is cleared
@@ -535,7 +577,7 @@ void main() {
           currentSession = tSession;
           final tRefreshError = buildRefreshDioException(statusCode: 400);
           when(() => mockAuthApi.refreshSession(any()))
-              .thenThrow(tRefreshError);
+              .thenAnswer((_) async => throw tRefreshError);
           // when
           await interceptor.onError(
             buildDioException(buildRequestOptions(), statusCode: 401),
@@ -598,7 +640,7 @@ void main() {
           currentSession = tSession;
           final tRefreshError = buildRefreshDioException();
           when(() => mockAuthApi.refreshSession(any()))
-              .thenThrow(tRefreshError);
+              .thenAnswer((_) async => throw tRefreshError);
           // when
           await interceptor.onError(
             buildDioException(buildRequestOptions(), statusCode: 401),
@@ -625,7 +667,7 @@ void main() {
           currentSession = tSession;
           final tRefreshError = buildRefreshDioException(statusCode: 429);
           when(() => mockAuthApi.refreshSession(any()))
-              .thenThrow(tRefreshError);
+              .thenAnswer((_) async => throw tRefreshError);
           // when
           await interceptor.onError(
             buildDioException(buildRequestOptions(), statusCode: 401),
@@ -651,7 +693,7 @@ void main() {
           currentSession = tSession;
           final tRefreshError = buildRefreshDioException(statusCode: 500);
           when(() => mockAuthApi.refreshSession(any()))
-              .thenThrow(tRefreshError);
+              .thenAnswer((_) async => throw tRefreshError);
           // when
           await interceptor.onError(
             buildDioException(buildRequestOptions(), statusCode: 401),

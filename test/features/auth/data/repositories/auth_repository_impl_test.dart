@@ -116,7 +116,8 @@ void main() {
         // given
         final tError = PlatformException(code: 'unavailable');
         setUpMockRemoteDataSourceSignIn(() async => tSessionModel);
-        when(() => mockLocalDataSource.save(any())).thenThrow(tError);
+        when(() => mockLocalDataSource.save(any()))
+            .thenAnswer((_) async => throw tError);
         // when
         final result = await repository.signIn(
           email: tEmail,
@@ -291,7 +292,7 @@ void main() {
       () async {
         // given
         when(() => mockRemoteDataSource.signOut())
-            .thenThrow(const ServerFailure('offline'));
+            .thenAnswer((_) async => throw const ServerFailure('offline'));
         when(() => mockLocalDataSource.clear()).thenAnswer((_) async {});
         // when
         await repository.signOut();
@@ -310,8 +311,9 @@ void main() {
       () async {
         // given
         when(() => mockRemoteDataSource.signOut()).thenAnswer((_) async {});
-        when(() => mockLocalDataSource.clear())
-            .thenThrow(PlatformException(code: 'unavailable'));
+        when(
+          () => mockLocalDataSource.clear(),
+        ).thenAnswer((_) async => throw PlatformException(code: 'unavailable'));
         // when
         final result = repository.signOut();
         // then

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_auth_template/core/app/data/datasources/session_local_data_source.dart';
 import 'package:flutter_auth_template/core/app/data/models/session_model.dart';
@@ -86,8 +84,25 @@ void main() {
       AND there is no session in memory, so the user starts signed out''',
       () async {
         // given
-        when(() => mockFlutterSecureStorage.read(key: any(named: 'key')))
-            .thenThrow(PlatformException(code: 'unreadable'));
+        when(
+          () => mockFlutterSecureStorage.read(key: any(named: 'key')),
+        ).thenAnswer((_) async => throw PlatformException(code: 'unreadable'));
+        // when
+        await dataSource.load();
+        // then
+        expect(dataSource.session, isNull);
+      },
+    );
+
+    test(
+      '''
+      GIVEN secure storage holds a session that is not valid JSON
+      WHEN the session is loaded
+      THEN loading completes without throwing
+      AND there is no session in memory, so the user starts signed out''',
+      () async {
+        // given
+        setUpMockSecureStorageRead('{"access_token":');
         // when
         await dataSource.load();
         // then
@@ -115,11 +130,12 @@ void main() {
         // when
         await dataSource.save(tSessionModel);
         // then
-        final expectedJsonString = jsonEncode(tSessionModel.toJson());
         verify(
           () => mockFlutterSecureStorage.write(
             key: tKey,
-            value: expectedJsonString,
+            value:
+                '{"access_token":"test-access-token",'
+                '"refresh_token":"test-refresh-token"}',
           ),
         );
         expect(dataSource.session, same(tSessionModel));
@@ -128,21 +144,18 @@ void main() {
   });
 
   group('clear', () {
-    final tSessionModel = SessionModel(
-      accessToken: tAccessToken,
-      refreshToken: tRefreshToken,
-    );
-
     test(
       '''
-      GIVEN a session that was saved earlier
+      GIVEN the user signed in on an earlier launch, so the session was
+            loaded from secure storage when the app started
       WHEN the session is cleared, like when the user signs out
       THEN the session is deleted from secure storage under the "session" key
       AND there is no session in memory anymore''',
       () async {
         // given
+        setUpMockSecureStorageRead(fixture('session_cached.json'));
         setUpMockSecureStorageWriteAndDelete();
-        await dataSource.save(tSessionModel);
+        await dataSource.load();
         // when
         await dataSource.clear();
         // then

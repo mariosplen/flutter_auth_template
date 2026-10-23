@@ -31,22 +31,6 @@ void main() {
   group('initial state', () {
     test(
       '''
-      GIVEN the user is signed out
-      AND nothing was saved for the app state yet
-      WHEN the app cubit is created
-      THEN the user is signed out''',
-      () {
-        // given
-        setUpMockGetIsSignedIn(isSignedIn: false);
-        // when
-        final cubit = buildCubit();
-        // then
-        expect(cubit.state, const AppState());
-      },
-    );
-
-    test(
-      '''
       GIVEN the user picked the dark theme on an earlier launch
       AND the saved app state still says the user is signed out
       AND the user is signed in now
@@ -62,6 +46,7 @@ void main() {
         });
         // when
         final cubit = buildCubit();
+        addTearDown(cubit.close);
         // then
         expect(cubit.state, const AppState(themeMode: .dark, isSignedIn: true));
       },

@@ -51,7 +51,8 @@ void main() {
 
   group('signIn', () {
     void setUpMockAuthApiSignInError(DioException error) {
-      when(() => mockAuthApi.signIn(any(), any())).thenThrow(error);
+      when(() => mockAuthApi.signIn(any(), any()))
+          .thenAnswer((_) async => throw error);
     }
 
     test(
@@ -196,7 +197,8 @@ void main() {
     const tSignUpResponseModel = SignUpNeedsConfirmation();
 
     void setUpMockAuthApiSignUpError(DioException error) {
-      when(() => mockAuthApi.signUp(any(), any(), any())).thenThrow(error);
+      when(() => mockAuthApi.signUp(any(), any(), any()))
+          .thenAnswer((_) async => throw error);
     }
 
     test(
@@ -347,7 +349,7 @@ void main() {
       () async {
         // given
         final tError = buildSupabaseAuthError('over_request_rate_limit');
-        when(() => mockAuthApi.signOut()).thenThrow(tError);
+        when(() => mockAuthApi.signOut()).thenAnswer((_) async => throw tError);
         // when
         final result = dataSource.signOut();
         // then

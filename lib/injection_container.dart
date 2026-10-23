@@ -69,7 +69,13 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PostsApi(sl()));
   sl.registerLazySingleton(() => ProfileApi(sl()));
 
-  sl.registerLazySingleton(createDio);
+  sl.registerLazySingleton(
+    () => createDio(
+      // passed with --dart-define-from-file
+      url: const String.fromEnvironment('SUPABASE_URL'),
+      publishableKey: const String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY'),
+    ),
+  );
   sl.registerLazySingleton(() => const FlutterSecureStorage());
 
   // AppCubit reads isSignedIn when it's created, so load the session first.

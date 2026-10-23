@@ -62,6 +62,36 @@ void main() {
         expect(result, isFalse);
       },
     );
+
+    test(
+      '''
+      GIVEN an empty email address
+      WHEN it is validated
+      THEN it is not valid''',
+      () {
+        // given
+        const tEmail = '';
+        // when
+        final result = isValidEmail(tEmail);
+        // then
+        expect(result, isFalse);
+      },
+    );
+
+    test(
+      '''
+      GIVEN an email address with two @ in a row
+      WHEN it is validated
+      THEN it is not valid''',
+      () {
+        // given
+        const tEmail = 'test@@example.com';
+        // when
+        final result = isValidEmail(tEmail);
+        // then
+        expect(result, isFalse);
+      },
+    );
   });
 
   group('isLongEnoughPassword', () {

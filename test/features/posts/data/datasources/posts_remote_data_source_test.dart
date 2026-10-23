@@ -61,7 +61,8 @@ void main() {
       AND its cause is the DioException from the API''',
       () async {
         // given
-        when(() => mockPostsApi.getPosts()).thenThrow(tConnectionError);
+        when(() => mockPostsApi.getPosts())
+            .thenAnswer((_) async => throw tConnectionError);
         // when
         final result = dataSource.getPosts();
         // then
@@ -102,7 +103,7 @@ void main() {
       () async {
         // given
         when(() => mockPostsApi.createPost(any(), any()))
-            .thenThrow(tServerError);
+            .thenAnswer((_) async => throw tServerError);
         // when
         final result = dataSource.createPost(title: tTitle, content: tContent);
         // then

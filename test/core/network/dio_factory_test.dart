@@ -6,14 +6,16 @@ void main() {
     test(
       '''
       GIVEN a Supabase URL
-      AND no publishable key
+      AND an empty publishable key, like when env/dev.json is not passed
       WHEN the Dio client is created
       THEN a StateError is thrown that says how to run the app''',
       () async {
         // given
         const tUrl = 'https://test-project.supabase.co';
         // when
-        final result = Future.sync(() => createDio(url: tUrl));
+        final result = Future.sync(
+          () => createDio(url: tUrl, publishableKey: ''),
+        );
         // then
         await expectLater(
           result,
@@ -31,7 +33,7 @@ void main() {
     test(
       '''
       GIVEN a publishable key
-      AND no Supabase URL
+      AND an empty Supabase URL, like when env/dev.json is not passed
       WHEN the Dio client is created
       THEN a StateError is thrown''',
       () async {
@@ -39,7 +41,7 @@ void main() {
         const tPublishableKey = 'sb_publishable_test';
         // when
         final result = Future.sync(
-          () => createDio(publishableKey: tPublishableKey),
+          () => createDio(url: '', publishableKey: tPublishableKey),
         );
         // then
         await expectLater(result, throwsA(isA<StateError>()));

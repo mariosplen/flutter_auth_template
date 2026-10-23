@@ -64,7 +64,8 @@ void main() {
            is returned''',
       () async {
         // given
-        when(() => mockRemoteDataSource.getPosts()).thenThrow(tFailure);
+        when(() => mockRemoteDataSource.getPosts())
+            .thenAnswer((_) async => throw tFailure);
         // when
         final result = await repository.getPosts();
         // then
@@ -84,7 +85,8 @@ void main() {
       () async {
         // given
         const tError = FormatException('unexpected post');
-        when(() => mockRemoteDataSource.getPosts()).thenThrow(tError);
+        when(() => mockRemoteDataSource.getPosts())
+            .thenAnswer((_) async => throw tError);
         // when
         final result = await repository.getPosts();
         // then
