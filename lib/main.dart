@@ -27,8 +27,8 @@ class const MainApp({super.key}) extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => di.sl<AppCubit>()),
-        BlocProvider(create: (_) => di.sl<AuthCubit>()),
+        BlocProvider.value(value: di.sl<AppCubit>()),
+        BlocProvider.value(value: di.sl<AuthCubit>()),
       ],
       child: Builder(
         builder: (context) => MaterialApp(
